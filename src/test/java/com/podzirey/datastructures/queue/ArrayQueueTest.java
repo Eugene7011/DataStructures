@@ -87,7 +87,7 @@ public class ArrayQueueTest {
         arrayQueue.enqueue("W");
         arrayQueue.enqueue("E");
 
-        assertEquals("[QWE]", arrayQueue.toString());
+        assertEquals("[Q, W, E]", arrayQueue.toString());
 
     }
 
