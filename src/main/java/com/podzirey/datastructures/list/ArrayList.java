@@ -117,4 +117,17 @@ public class ArrayList implements  List{
         }
         return index;
     }
+
+    @Override
+    public String toString() {
+        String result = "[";
+        for (int i = 0; i < size; i++) {
+            result = result + String.valueOf(array[i]);
+            if(i < size -1){
+                result = result + ", ";
+            }
+        }
+        return result + "]";
+    }
+
 }
