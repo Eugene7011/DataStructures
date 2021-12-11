@@ -98,14 +98,14 @@ public class LinkedListTest {
     @Test
     public void testIndexOf(){
         LinkedList linkedList = new LinkedList();
-        linkedList.add(1);
+
         linkedList.add(2);
         linkedList.add(3);
         linkedList.add(5);
         linkedList.add(9);
         linkedList.add(1);
 
-        assertEquals(5, linkedList.indexOf(1));
+        assertEquals(4, linkedList.indexOf(1));
     }
 
     @Test
