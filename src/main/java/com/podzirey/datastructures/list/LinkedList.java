@@ -181,12 +181,19 @@ public class LinkedList implements List{
 
     @Override
     public int indexOf(Object value) {
+        int count = 0;
         for (int i = 0; i < size; i++) {
             if(value.equals(get(i))){
+                count++;
+            }
+            if (count > 1){
+                throw new IllegalArgumentException("List contains several objects with entered value!");
+            }
+            if (i == size -1){
                 return i;
             }
         }
-        throw new IllegalArgumentException("Array doesn't contain value!");
+        throw new IllegalArgumentException("List doesn't contain value!");
     }
 
     @Override
@@ -198,7 +205,7 @@ public class LinkedList implements List{
             }
         }
         if(index == -1){
-            throw new IllegalArgumentException("Array doesn't contain value!");
+            throw new IllegalArgumentException("List doesn't contain value!");
         }
         return index;
     }

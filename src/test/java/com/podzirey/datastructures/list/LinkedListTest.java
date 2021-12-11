@@ -16,8 +16,11 @@ public class LinkedListTest {
         linkedList.add(1);
         linkedList.add(2);
         linkedList.add(3);
+        linkedList.add(1);
+        linkedList.add(2);
+        linkedList.add(3);
 
-        assertEquals(3, linkedList.size());
+        assertEquals(6, linkedList.size());
 
     }
 
@@ -28,9 +31,12 @@ public class LinkedListTest {
         linkedList.add(5);
         linkedList.add(3);
         linkedList.add(1);
+        linkedList.add(9);
+        linkedList.add(8);
+        linkedList.add(7);
 
-        assertEquals(1, (linkedList.getNode(2).value));
-        assertEquals(1, (linkedList.getTail().value));
+        assertEquals(8, (linkedList.getNode(4).value));
+        assertEquals(7, (linkedList.getTail().value));
         assertEquals(5, (linkedList.getHead().value));
 
     }
@@ -45,10 +51,11 @@ public class LinkedListTest {
 
         linkedList.add(8, 1);
         assertEquals(4, linkedList.size());
-        assertEquals(8, linkedList.get(1));
+        assertEquals(1, linkedList.get(0));
 
         linkedList.set(11, 3);
-        assertEquals(11, linkedList.get(3));
+        assertEquals(1, linkedList.get(0));
+        assertEquals(4, linkedList.size());
 
         linkedList.clear();
         assertEquals(0, linkedList.size());
@@ -61,14 +68,16 @@ public class LinkedListTest {
         linkedList.add(1);
         linkedList.add(2);
         linkedList.add(3);
+        linkedList.add(5);
+        linkedList.add(6);
 
-        assertTrue(linkedList.contains(2));
+        assertTrue(linkedList.contains(6));
         assertFalse(linkedList.contains(7));
 
 
-        linkedList.remove(2);
-        assertFalse(linkedList.contains(3));
-        assertEquals(2, (linkedList.getTail().value));
+        linkedList.remove(0);
+        assertFalse(linkedList.contains(1));
+        assertEquals(6, (linkedList.getTail().value));
 
         linkedList.clear();
         assertEquals(0, linkedList.size());
@@ -92,8 +101,11 @@ public class LinkedListTest {
         linkedList.add(1);
         linkedList.add(2);
         linkedList.add(3);
+        linkedList.add(5);
+        linkedList.add(9);
+        linkedList.add(1);
 
-        assertEquals(2, linkedList.indexOf(3));
+        assertEquals(5, linkedList.indexOf(1));
     }
 
     @Test
@@ -104,20 +116,24 @@ public class LinkedListTest {
         linkedList.add(3);
         linkedList.add(2);
         linkedList.add(3);
+        linkedList.add(1);
 
-        assertEquals(4, linkedList.lastIndexOf(3));
+        assertEquals(5, linkedList.lastIndexOf(1));
     }
 
+    @Test
     public void testToString(){
         LinkedList linkedList = new LinkedList();
         linkedList.add(1);
         linkedList.add(2);
         linkedList.add(3);
-        linkedList.add(2);
-        linkedList.add(3);
+        linkedList.add("A");
+        linkedList.add("B");
 
-        assertEquals("[1, 2, 3, 2, 3]", linkedList.toString());
+        assertEquals("[1, 2, 3, A, B]", linkedList.toString());
     }
+
+
 
 
 }
