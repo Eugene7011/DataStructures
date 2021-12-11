@@ -5,6 +5,11 @@ import javax.management.ValueExp;
 public class ArrayList implements  List{
     private Object[] array;
     private int size;
+    private final int size2 = 10;
+
+    public int getSize2() {
+        return size2;
+    }
 
     @Override
     public void add(Object value) {
