@@ -10,27 +10,19 @@ public class LinkedList implements List{
 
     @Override
     public void add(Object value) {
-        Node newNode = new Node(value);
-        if(size==0){
-            head = tail = newNode;
-        } else {
-            tail.next = newNode;
-            newNode.prev = tail;
-            tail = newNode;
-        }
-        size++;
+        add(value, size);
     }
 
     @Override
     public void add(Object value, int index) {
-        if(index < 0 || index > size - 1){
+        if(index < 0 || index > size){
             throw new IndexOutOfBoundsException("Index is out of bounds");
         }
 
         Node newNode = new Node(value);
         if(size==0){
             head = tail = newNode;
-        } else if (index == size -1){
+        } else if (index == size){
             tail.next = newNode;
             newNode.prev = tail;
             tail = newNode;
@@ -38,7 +30,7 @@ public class LinkedList implements List{
             head.prev = newNode;
             newNode.next = head;
             head = newNode;
-        } else if(index != 0 & index < size - 1){
+        } else if(index != 0 & index < size){
             Node currentNode = getNode(index);
             Node prevNode = currentNode.prev;
 
@@ -57,20 +49,24 @@ public class LinkedList implements List{
             throw new IndexOutOfBoundsException("Index is out of bounds");
         }
         Node removedNode = getNode(index);
-        if(index == 0){
-            head = removedNode.next;
-            head.prev = null;
-        } else if(index == size - 1){
-            tail = removedNode.prev;
-            tail.next = null;
+        if(size == 1){
+            head = tail = null;
         } else {
-            Node prevNode = removedNode.prev;
-            Node nextNode = removedNode.next;
+            if (index == 0) {
 
-            prevNode.next = nextNode;
-            nextNode.prev = prevNode;
+                head = removedNode.next;
+                head.prev = null;
+            } else if (index == size - 1) {
+                tail = removedNode.prev;
+                tail.next = null;
+            } else {
+                Node prevNode = removedNode.prev;
+                Node nextNode = removedNode.next;
+
+                prevNode.next = nextNode;
+                nextNode.prev = prevNode;
+            }
         }
-
         size--;
         return removedNode.value;
 
@@ -170,6 +166,9 @@ public class LinkedList implements List{
 
     @Override
     public boolean contains(Object value) {
+        if(value == null){
+            throw new IllegalArgumentException("Object value can't be null!");
+        }
         for (int i = 0; i < size; i++) {
             if(value.equals(get(i))){
                 return true;

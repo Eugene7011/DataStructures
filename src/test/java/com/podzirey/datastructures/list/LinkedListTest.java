@@ -49,7 +49,7 @@ public class LinkedListTest {
         linkedList.add(2);
         linkedList.add(3);
 
-        linkedList.add(8, 1);
+        linkedList.add(8, 3);
         assertEquals(4, linkedList.size());
         assertEquals(1, linkedList.get(0));
 
@@ -81,6 +81,11 @@ public class LinkedListTest {
 
         linkedList.clear();
         assertEquals(0, linkedList.size());
+
+        linkedList.add(1);
+        linkedList.remove(0);
+        assertTrue(linkedList.isEmpty());
+
     }
 
     @Test
