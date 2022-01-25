@@ -2,7 +2,7 @@ package com.podzirey.datastructures.list;
 
 import java.util.StringJoiner;
 
-public class LinkedList implements List{
+public class LinkedList implements List {
 
     private Node head;
     private Node tail;
@@ -15,22 +15,25 @@ public class LinkedList implements List{
 
     @Override
     public void add(Object value, int index) {
-        if(index < 0 || index > size){
+        if (index < 0 || index > size) {
             throw new IndexOutOfBoundsException("Index is out of bounds");
+        }
+        if (value == null) {
+            throw new IllegalArgumentException("Invalid object value");
         }
 
         Node newNode = new Node(value);
-        if(size==0){
+        if (size == 0) {
             head = tail = newNode;
-        } else if (index == size){
-            tail.next = newNode;
-            newNode.prev = tail;
-            tail = newNode;
-        } else if(index == 0){
+        } else if (index == 0) {
             head.prev = newNode;
             newNode.next = head;
             head = newNode;
-        } else if(index != 0 & index < size){
+        } else if (index == size) {
+            tail.next = newNode;
+            newNode.prev = tail;
+            tail = newNode;
+        } else {
             Node currentNode = getNode(index);
             Node prevNode = currentNode.prev;
 
@@ -38,58 +41,26 @@ public class LinkedList implements List{
             newNode.next = currentNode;
             prevNode.next = newNode;
             currentNode.prev = newNode;
-
         }
         size++;
     }
 
-    @Override
-    public Object remove(int index) {
-        if(index < 0 || index > size - 1){
-            throw new IndexOutOfBoundsException("Index is out of bounds");
-        }
-        Node removedNode = getNode(index);
-        if(size == 1){
-            head = tail = null;
-        } else {
-            if (index == 0) {
-
-                head = removedNode.next;
-                head.prev = null;
-            } else if (index == size - 1) {
-                tail = removedNode.prev;
-                tail.next = null;
-            } else {
-                Node prevNode = removedNode.prev;
-                Node nextNode = removedNode.next;
-
-                prevNode.next = nextNode;
-                nextNode.prev = prevNode;
-            }
-        }
-        size--;
-        return removedNode.value;
-
-    }
-
-    public Node getNode(int index){
-        if(index < 0 || index > size - 1){
+    private Node getNode(int index) {
+        if (index < 0 || index > size - 1) {
             throw new IndexOutOfBoundsException("Index is out of bounds");
         }
         Node nodeByIndex = new Node();
-        if(index == 0){
-            nodeByIndex = head;
-        } else if(index == size - 1) {
-            nodeByIndex = tail;
-        }
 
-        if(0 < index & index < (size/2)) {
+        if (index == 0) {
+            nodeByIndex = head;
+        } else if (index == size - 1) {
+            nodeByIndex = tail;
+        } else if (index < (size / 2)) {
             nodeByIndex = head.next;
             for (int i = 1; i < index; i++) {
                 nodeByIndex = nodeByIndex.next;
             }
-        }
-        if((size/2) <= index & index < size - 1) {
+        } else if ((size / 2) <= index & index < size - 1) {
             nodeByIndex = tail.prev;
             for (int i = 1; i < (size - 1 - index); i++) {
                 nodeByIndex = nodeByIndex.prev;
@@ -98,49 +69,45 @@ public class LinkedList implements List{
         return nodeByIndex;
     }
 
-    public Node getTail(){
-        Node tail = getNode(size - 1);
-        return tail;
-    }
-
-    public Node getHead(){
-        Node head = getNode(0);
-        return head;
+    @Override
+    public Object remove(int index) {
+        if (index < 0 || index > size - 1) {
+            throw new IndexOutOfBoundsException("Index is out of bounds");
+        }
+        Node removedNode = getNode(index);
+        if(size == 1){
+            head = tail = null;
+        } else{
+            if(index == 0){
+                head = removedNode.next;
+                head.prev = null;
+            } else if(index == size - 1){
+                tail = removedNode.prev;
+                tail.next = null;
+            } else if(index < size - 1){
+                Node prevNode = removedNode.prev;
+                Node nextNode = removedNode.next;
+                prevNode.next = nextNode;
+                nextNode.prev = prevNode;
+            }
+        }
+        size--;
+        return removedNode.value;
     }
 
     @Override
     public Object get(int index) {
-        if(index < 0 || index > size - 1){
-            throw new IndexOutOfBoundsException("Index is out of bounds");
-        }
-        Node nodeByIndex = new Node();
-        if(index == 0){
-            nodeByIndex = head;
-        } else if(index == size - 1) {
-            nodeByIndex = tail;
-        }
-
-        if(0 < index && index < (size/2)) {
-            nodeByIndex = head.next;
-            for (int i = 1; i < index; i++) {
-                nodeByIndex = nodeByIndex.next;
-            }
-        }
-        if((size/2) <= index && index < size - 1) {
-            nodeByIndex = tail.prev;
-            for (int i = 1; i < (size - 1 - index); i++) {
-                nodeByIndex = nodeByIndex.prev;
-            }
-        }
-        return nodeByIndex.value;
+        return getNode(index).value;
     }
 
     @Override
     public Object set(Object value, int index) {
-        if(index < 0 || index > size - 1){
+        if (index < 0 || index > size - 1) {
             throw new IndexOutOfBoundsException("Index is out of bounds");
         }
-
+        if (value == null) {
+            throw new IllegalArgumentException("Invalid object value");
+        }
         Object oldObject = get(index);
         getNode(index).value = value;
         return oldObject;
@@ -148,6 +115,9 @@ public class LinkedList implements List{
 
     @Override
     public void clear() {
+        if(isEmpty()){
+            throw new IllegalArgumentException("List is already Empty!");
+        }
         for (int i = 0; i < size; i++) {
             getNode(i).value = null;
         }
@@ -166,56 +136,79 @@ public class LinkedList implements List{
 
     @Override
     public boolean contains(Object value) {
-        if(value == null){
-            throw new IllegalArgumentException("Object value can't be null!");
+        if (value == null) {
+            throw new IllegalArgumentException("Invalid object value");
+        }
+        if(isEmpty()){
+            throw new IllegalArgumentException("List is Empty!");
         }
         for (int i = 0; i < size; i++) {
-            if(value.equals(get(i))){
+            if (get(i).equals(value)){
                 return true;
             }
         }
-
         return false;
     }
 
     @Override
     public int indexOf(Object value) {
-        int count = 0;
-        for (int i = 0; i < size; i++) {
-            if(value.equals(get(i))){
-                count++;
-            }
-            if (count > 1){
-                throw new IllegalArgumentException("List contains several objects with entered value!");
-            }
-            if (i == size -1){
-                return i;
+        if (value == null) {
+            throw new IllegalArgumentException("Invalid object value");
+        }
+        if(isEmpty()){
+            throw new IllegalArgumentException("List is Empty!");
+        }
+        if (contains(value)){
+            for (int i = 0; i < size; i++) {
+                if (get(i).equals(value)){
+                    return i;
+                }
             }
         }
-        throw new IllegalArgumentException("List doesn't contain value!");
+       return -1;
     }
 
     @Override
     public int lastIndexOf(Object value) {
-        int index = -1;
-        for (int i = 0; i < size; i++) {
-            if(value.equals(get(i))){
-                index = i;
+        if (value == null) {
+            throw new IllegalArgumentException("Invalid object value");
+        }
+        if(isEmpty()){
+            throw new IllegalArgumentException("List is Empty!");
+        }
+        int lastIndexOf = -1;
+        if (contains(value)){
+            for (int i = 0; i < size; i++) {
+                if (get(i).equals(value)){
+                    lastIndexOf = i;
+                }
             }
         }
-        if(index == -1){
-            throw new IllegalArgumentException("List doesn't contain value!");
-        }
-        return index;
+        return lastIndexOf;
     }
 
-    @Override
+    public Node getTail() {
+        if(isEmpty()){
+            throw new IllegalArgumentException("List is Empty!");
+        }
+        return getNode(size - 1);
+    }
+
+    public Node getHead() {
+        if(isEmpty()){
+            throw new IllegalArgumentException("List is Empty!");
+        }
+        return getNode(0);
+    }
+
     public String toString() {
-        StringJoiner stringJoiner = new StringJoiner(", ", "[", "]");
+        if(isEmpty()){
+            throw new IllegalArgumentException("List is Empty!");
+        }
+        StringJoiner stringJoiner = new StringJoiner(",", "[", "]");
         for (int i = 0; i < size; i++) {
             stringJoiner.add(get(i).toString());
         }
-
         return stringJoiner.toString();
     }
 }

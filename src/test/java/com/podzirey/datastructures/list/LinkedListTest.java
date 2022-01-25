@@ -1,7 +1,5 @@
 package com.podzirey.datastructures.list;
 
-import com.podzirey.datastructures.queue.ArrayQueue;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -10,13 +8,17 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 public class LinkedListTest {
 
     @Test
-    public void testAddAndSize() {
+    public void testCheckSizeAfterAdd() {
         LinkedList linkedList = new LinkedList();
 
         linkedList.add(1);
         linkedList.add(2);
+        assertEquals(2, linkedList.size());
+
         linkedList.add(3);
         linkedList.add(1);
+        assertEquals(4, linkedList.size());
+
         linkedList.add(2);
         linkedList.add(3);
 
@@ -25,7 +27,26 @@ public class LinkedListTest {
     }
 
     @Test
-    public void testAddAndTail(){
+    public void testAddByIndexWorksCorrect() {
+        LinkedList linkedList = new LinkedList();
+
+        linkedList.add(1);
+        linkedList.add(2);
+        linkedList.add(3);
+
+        linkedList.add(4,0);
+        assertEquals(4, linkedList.get(0));
+        linkedList.add(5, 2);
+        assertEquals(5, linkedList.get(2));
+        linkedList.add(6, 5);
+        assertEquals(6, linkedList.get(5));
+
+        assertEquals(6, linkedList.size());
+
+    }
+
+    @Test
+    public void testCheckTailAndHeadAfterAdd() {
         LinkedList linkedList = new LinkedList();
 
         linkedList.add(5);
@@ -35,14 +56,14 @@ public class LinkedListTest {
         linkedList.add(8);
         linkedList.add(7);
 
-        assertEquals(8, (linkedList.getNode(4).value));
-        assertEquals(7, (linkedList.getTail().value));
-        assertEquals(5, (linkedList.getHead().value));
+        assertEquals(8, linkedList.get(4));
+        assertEquals(7, linkedList.getTail().value);
+        assertEquals(5, linkedList.getHead().value);
 
     }
 
     @Test
-    public void testGetSetAndClear(){
+    public void testGetSetAndClear() {
         LinkedList linkedList = new LinkedList();
 
         linkedList.add(1);
@@ -53,17 +74,17 @@ public class LinkedListTest {
         assertEquals(4, linkedList.size());
         assertEquals(1, linkedList.get(0));
 
-        linkedList.set(11, 3);
+        assertEquals(8, linkedList.set(11, 3));
         assertEquals(1, linkedList.get(0));
         assertEquals(4, linkedList.size());
+        assertEquals(11, linkedList.get(3));
 
         linkedList.clear();
         assertEquals(0, linkedList.size());
-
     }
 
     @Test
-    public void testRemoveClearAndContains(){
+    public void testCheckContainsAfterAddRemoveAndClear() {
         LinkedList linkedList = new LinkedList();
         linkedList.add(1);
         linkedList.add(2);
@@ -74,10 +95,10 @@ public class LinkedListTest {
         assertTrue(linkedList.contains(6));
         assertFalse(linkedList.contains(7));
 
-
-        linkedList.remove(0);
+        assertEquals(1, linkedList.remove(0));
         assertFalse(linkedList.contains(1));
-        assertEquals(6, (linkedList.getTail().value));
+        assertEquals(6, linkedList.getTail().value);
+        assertEquals(2, linkedList.getHead().value);
 
         linkedList.clear();
         assertEquals(0, linkedList.size());
@@ -89,7 +110,7 @@ public class LinkedListTest {
     }
 
     @Test
-    public void testIsEmptyReturnTrueAfterClear(){
+    public void testIsEmptyReturnsTrueAfterClear() {
         LinkedList linkedList = new LinkedList();
         linkedList.add(1);
         linkedList.add(2);
@@ -101,20 +122,36 @@ public class LinkedListTest {
     }
 
     @Test
-    public void testIndexOf(){
+    public void testIndexOfWorksCorrect() {
         LinkedList linkedList = new LinkedList();
 
         linkedList.add(2);
         linkedList.add(3);
         linkedList.add(5);
-        linkedList.add(9);
+        linkedList.add(3);
         linkedList.add(1);
 
         assertEquals(4, linkedList.indexOf(1));
+        assertEquals(1, linkedList.indexOf(3));
+        assertEquals(0, linkedList.indexOf(2));
+
     }
 
     @Test
-    public void testLastIndexOf(){
+    public void testCheckHeadAfterAdd() {
+        LinkedList linkedList = new LinkedList();
+        linkedList.add(1);
+        linkedList.add(2);
+        linkedList.add(3);
+        linkedList.add(2);
+
+        assertEquals(1, linkedList.get(0));
+        assertEquals(1, linkedList.getHead().value);
+
+    }
+
+    @Test
+    public void testLastIndexOfWorksCorrect() {
         LinkedList linkedList = new LinkedList();
         linkedList.add(1);
         linkedList.add(2);
@@ -124,10 +161,12 @@ public class LinkedListTest {
         linkedList.add(1);
 
         assertEquals(5, linkedList.lastIndexOf(1));
+        assertEquals(3, linkedList.lastIndexOf(2));
+        assertEquals(4, linkedList.lastIndexOf(3));
     }
 
     @Test
-    public void testToString(){
+    public void testVerifyToString() {
         LinkedList linkedList = new LinkedList();
         linkedList.add(1);
         linkedList.add(2);
@@ -135,10 +174,6 @@ public class LinkedListTest {
         linkedList.add("A");
         linkedList.add("B");
 
-        assertEquals("[1, 2, 3, A, B]", linkedList.toString());
+        assertEquals("[1,2,3,A,B]", linkedList.toString());
     }
-
-
-
-
 }

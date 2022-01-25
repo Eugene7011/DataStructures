@@ -31,7 +31,7 @@ public class Test {
                 declaredField.set(arrayList, -100_000);
             }
         }
-        System.out.println(arrayList.getSize2());
+        //System.out.println(arrayList.getSize2());
 
     }
     static void print (int prefix, String... array){
