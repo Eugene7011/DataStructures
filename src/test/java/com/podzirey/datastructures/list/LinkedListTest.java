@@ -2,6 +2,8 @@ package com.podzirey.datastructures.list;
 
 import org.junit.jupiter.api.Test;
 
+import java.util.Iterator;
+
 import static org.junit.jupiter.api.Assertions.*;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
@@ -34,7 +36,7 @@ public class LinkedListTest {
         linkedList.add(2);
         linkedList.add(3);
 
-        linkedList.add(4,0);
+        linkedList.add(4, 0);
         assertEquals(4, linkedList.get(0));
         linkedList.add(5, 2);
         assertEquals(5, linkedList.get(2));
@@ -57,8 +59,8 @@ public class LinkedListTest {
         linkedList.add(7);
 
         assertEquals(8, linkedList.get(4));
-        assertEquals(7, linkedList.getTail().value);
-        assertEquals(5, linkedList.getHead().value);
+        assertEquals(7, linkedList.get(linkedList.size() - 1));
+        assertEquals(5, linkedList.get(0));
 
     }
 
@@ -87,18 +89,21 @@ public class LinkedListTest {
     public void testCheckContainsAfterAddRemoveAndClear() {
         LinkedList linkedList = new LinkedList();
         linkedList.add(1);
+        assertEquals(1, linkedList.get(0));
         linkedList.add(2);
         linkedList.add(3);
         linkedList.add(5);
         linkedList.add(6);
+
+        assertEquals(5, linkedList.size());
 
         assertTrue(linkedList.contains(6));
         assertFalse(linkedList.contains(7));
 
         assertEquals(1, linkedList.remove(0));
         assertFalse(linkedList.contains(1));
-        assertEquals(6, linkedList.getTail().value);
-        assertEquals(2, linkedList.getHead().value);
+        assertEquals(6, linkedList.get(linkedList.size() - 1));
+        assertEquals(2, linkedList.get(0));
 
         linkedList.clear();
         assertEquals(0, linkedList.size());
@@ -146,7 +151,7 @@ public class LinkedListTest {
         linkedList.add(2);
 
         assertEquals(1, linkedList.get(0));
-        assertEquals(1, linkedList.getHead().value);
+        assertEquals(2, linkedList.get(3));
 
     }
 
@@ -175,5 +180,18 @@ public class LinkedListTest {
         linkedList.add("B");
 
         assertEquals("[1,2,3,A,B]", linkedList.toString());
+    }
+
+    @Test
+    public void testIteratorWorksCorrect() {
+        LinkedList linkedList = new LinkedList();
+        linkedList.add(1);
+        linkedList.add(2);
+        Iterator iterator = linkedList.iterator();
+        assertTrue(iterator.hasNext());
+        assertEquals(1, iterator.next());
+        assertTrue(iterator.hasNext());
+        assertEquals(2, iterator.next());
+        assertFalse(iterator.hasNext());
     }
 }

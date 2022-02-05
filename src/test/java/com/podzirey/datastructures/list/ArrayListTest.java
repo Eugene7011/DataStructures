@@ -2,6 +2,8 @@ package com.podzirey.datastructures.list;
 
 import org.junit.jupiter.api.Test;
 
+import java.util.Iterator;
+
 import static org.junit.jupiter.api.Assertions.*;
 
 public class ArrayListTest {
@@ -47,8 +49,17 @@ public class ArrayListTest {
         assertEquals(2, arrayList.size());
         assertEquals(7, arrayList.get(0));
         arrayList.remove(0);
-        assertEquals(3, arrayList.get(0));
 
+
+    }
+
+    @Test
+    public void testVerifyNull() {
+        ArrayList arrayList = new ArrayList();
+        arrayList.add(1);
+        arrayList.add(null);
+        arrayList.add(3);
+        assertNull(arrayList.get(1));
     }
 
     @Test
@@ -57,7 +68,8 @@ public class ArrayListTest {
         arrayList.add(1);
         arrayList.add(2);
         arrayList.add(3);
-        assertEquals("[1,2,3]", arrayList.toString());
+        arrayList.add(null);
+        assertEquals("[1,2,3,null]", arrayList.toString());
     }
 
     @Test
@@ -130,5 +142,18 @@ public class ArrayListTest {
 
         arrayList.remove(0);
         assertEquals(1, arrayList.indexOf(3));
+    }
+
+    @Test
+    public void testIteratorWorksCorrect() {
+        ArrayList arrayList = new ArrayList();
+        arrayList.add(1);
+        arrayList.add(2);
+        Iterator iterator = arrayList.iterator();
+        assertTrue(iterator.hasNext());
+        assertEquals(1, iterator.next());
+        assertTrue(iterator.hasNext());
+        assertEquals(2, iterator.next());
+        assertFalse(iterator.hasNext());
     }
 }

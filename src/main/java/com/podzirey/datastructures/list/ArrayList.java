@@ -1,8 +1,9 @@
 package com.podzirey.datastructures.list;
 
+import java.util.Iterator;
 import java.util.StringJoiner;
 
-public class ArrayList implements List {
+public class ArrayList implements List, Iterable {
     private static final int DEFAULT_INITIAL_CAPACITY = 10;
 
     private Object[] array;
@@ -18,66 +19,56 @@ public class ArrayList implements List {
 
     @Override
     public void add(Object value) {
-        isEnoughSpaceInArray();
-        array[size] = value;
-        size++;
+        add(value, size);
     }
 
-    private void isEnoughSpaceInArray() {
+    private void growIfNoCapacity() {
         if (size == array.length) {
-            double newCapacity = size * 1.5;
+            double newCapacity = array.length * 1.5 + 1;
             Object[] newArray = new Object[(int) newCapacity];
-            System.arraycopy(array, 0, newArray, 0, size);
+            System.arraycopy(array, 0, newArray, 0, array.length);
             array = newArray;
-
         }
     }
 
     @Override
     public void add(Object value, int index) {
         if (index < 0 || index > size) {
-            throw new IndexOutOfBoundsException("Index is out of bounds");
+            throw new IndexOutOfBoundsException("Index should be in range [0] - [size]");
         }
-        isEnoughSpaceInArray();
-
+        growIfNoCapacity();
         System.arraycopy(array, index, array, index + 1, size - index);
-        size++;
         array[index] = value;
+        size++;
+    }
+
+    public void checkIfIndexIsInBounds(int index){
+        if (index < 0 || index > size - 1) {
+            throw new IndexOutOfBoundsException("Index should be in range [0] - [size - 1]");
+        }
     }
 
     @Override
     public Object remove(int index) {
-        if (index < 0 || index > size - 1) {
-            throw new IndexOutOfBoundsException("Index is out of bounds");
-        }
+        checkIfIndexIsInBounds(index);
         Object removed = array[index];
-        if (index == size - 1) {
-            array[index] = null;
-            size--;
-        } else {
+        if (index != size - 1) {
             System.arraycopy(array, index + 1, array, index, size - index - 1);
-            size--;
-            array[size - 1] = null;
         }
+        array[size - 1] = null;
+        size--;
         return removed;
     }
 
     @Override
     public Object get(int index) {
-        if (index < 0 || index > size - 1) {
-            throw new IndexOutOfBoundsException("Index is out of bounds");
-        }
+        checkIfIndexIsInBounds(index);
         return array[index];
     }
 
     @Override
     public Object set(Object value, int index) {
-        if (index < 0 || index > size - 1) {
-            throw new IndexOutOfBoundsException("Index is out of bounds");
-        }
-        if (value == null) {
-            throw new IllegalArgumentException("Object value can't be null!");
-        }
+        checkIfIndexIsInBounds(index);
         Object old = array[index];
         array[index] = value;
         return old;
@@ -85,9 +76,6 @@ public class ArrayList implements List {
 
     @Override
     public void clear() {
-        if (isEmpty()) {
-            throw new IllegalArgumentException("Array is already empty!");
-        }
         for (int i = 0; i < size; i++) {
             array[i] = null;
         }
@@ -106,17 +94,11 @@ public class ArrayList implements List {
 
     @Override
     public boolean contains(Object value) {
-        if (value == null) {
-            throw new IllegalArgumentException("Object value can't be null!");
-        }
         return indexOf(value) >= 0;
     }
 
     @Override
     public int indexOf(Object value) {
-        if (value == null) {
-            throw new IllegalArgumentException("Object value can't be null!");
-        }
         for (int i = 0; i < size; i++) {
             if (array[i].equals(value)) {
                 return i;
@@ -127,12 +109,6 @@ public class ArrayList implements List {
 
     @Override
     public int lastIndexOf(Object value) {
-        if (value == null) {
-            throw new IllegalArgumentException("Object value can't be null!");
-        }
-        if (isEmpty()) {
-            throw new IllegalArgumentException("Array is empty");
-        }
         int result = -1;
         for (int i = 0; i < size; i++) {
             if (array[i].equals(value))
@@ -143,14 +119,45 @@ public class ArrayList implements List {
 
     @Override
     public String toString() {
-        if (isEmpty()) {
-            throw new IllegalArgumentException("Array is empty");
-        }
         StringJoiner stringJoiner = new StringJoiner(",", "[", "]");
-        for (int i = 0; i < size; i++) {
-            stringJoiner.add(get(i).toString());
+
+        for (Object value : this) {
+            stringJoiner.add(String.valueOf(value));
         }
         return stringJoiner.toString();
     }
 
+    @Override
+    public Iterator iterator() {
+        return new MyIterator();
+    }
+
+    class MyIterator implements Iterator {
+        private int index = 0;
+        boolean canRemove;
+
+        @Override
+        public boolean hasNext() {
+            return index < size;
+        }
+
+        @Override
+        public Object next() {
+            Object value = array[index];
+            index++;
+            canRemove = true;
+            return value;
+        }
+
+        @Override
+        public void remove() {
+            if (canRemove) {
+                ArrayList.this.remove(index - 1);
+            } else {
+                throw new IllegalArgumentException("Already removed");
+            }
+            canRemove = false;
+            index--;
+        }
+    }
 }
