@@ -3,10 +3,10 @@ package com.podzirey.datastructures.list;
 import java.util.Iterator;
 import java.util.StringJoiner;
 
-public class ArrayList implements List, Iterable {
+public class ArrayList<T> implements List<T>, Iterable<T> {
     private static final int DEFAULT_INITIAL_CAPACITY = 10;
 
-    private Object[] array;
+    private T[] array;
     private int size;
 
     public ArrayList() {
@@ -14,25 +14,25 @@ public class ArrayList implements List, Iterable {
     }
 
     public ArrayList(int capacity) {
-        this.array = new Object[capacity];
+        array = (T[]) new Object[capacity];
     }
 
     @Override
-    public void add(Object value) {
+    public void add(T value) {
         add(value, size);
     }
 
     private void growIfNoCapacity() {
         if (size == array.length) {
             double newCapacity = array.length * 1.5 + 1;
-            Object[] newArray = new Object[(int) newCapacity];
+            T[] newArray = (T[]) new Object[(int) newCapacity];
             System.arraycopy(array, 0, newArray, 0, array.length);
             array = newArray;
         }
     }
 
     @Override
-    public void add(Object value, int index) {
+    public void add(T value, int index) {
         if (index < 0 || index > size) {
             throw new IndexOutOfBoundsException("Index should be in range [0] - [size]");
         }
@@ -42,16 +42,16 @@ public class ArrayList implements List, Iterable {
         size++;
     }
 
-    public void checkIfIndexIsInBounds(int index){
+    private void checkIfIndexIsInBounds(int index) {
         if (index < 0 || index > size - 1) {
             throw new IndexOutOfBoundsException("Index should be in range [0] - [size - 1]");
         }
     }
 
     @Override
-    public Object remove(int index) {
+    public T remove(int index) {
         checkIfIndexIsInBounds(index);
-        Object removed = array[index];
+        T removed = array[index];
         if (index != size - 1) {
             System.arraycopy(array, index + 1, array, index, size - index - 1);
         }
@@ -61,15 +61,15 @@ public class ArrayList implements List, Iterable {
     }
 
     @Override
-    public Object get(int index) {
+    public T get(int index) {
         checkIfIndexIsInBounds(index);
         return array[index];
     }
 
     @Override
-    public Object set(Object value, int index) {
+    public T set(T value, int index) {
         checkIfIndexIsInBounds(index);
-        Object old = array[index];
+        T old = array[index];
         array[index] = value;
         return old;
     }
@@ -93,12 +93,12 @@ public class ArrayList implements List, Iterable {
     }
 
     @Override
-    public boolean contains(Object value) {
+    public boolean contains(T value) {
         return indexOf(value) >= 0;
     }
 
     @Override
-    public int indexOf(Object value) {
+    public int indexOf(T value) {
         for (int i = 0; i < size; i++) {
             if (array[i].equals(value)) {
                 return i;
@@ -108,7 +108,7 @@ public class ArrayList implements List, Iterable {
     }
 
     @Override
-    public int lastIndexOf(Object value) {
+    public int lastIndexOf(T value) {
         int result = -1;
         for (int i = 0; i < size; i++) {
             if (array[i].equals(value))
@@ -121,18 +121,18 @@ public class ArrayList implements List, Iterable {
     public String toString() {
         StringJoiner stringJoiner = new StringJoiner(",", "[", "]");
 
-        for (Object value : this) {
+        for (T value : this) {
             stringJoiner.add(String.valueOf(value));
         }
         return stringJoiner.toString();
     }
 
     @Override
-    public Iterator iterator() {
+    public Iterator<T> iterator() {
         return new MyIterator();
     }
 
-    class MyIterator implements Iterator {
+    class MyIterator implements Iterator<T> {
         private int index = 0;
         boolean canRemove;
 
@@ -142,8 +142,8 @@ public class ArrayList implements List, Iterable {
         }
 
         @Override
-        public Object next() {
-            Object value = array[index];
+        public T next() {
+            T value = array[index];
             index++;
             canRemove = true;
             return value;
