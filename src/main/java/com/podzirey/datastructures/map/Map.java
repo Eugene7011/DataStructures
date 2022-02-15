@@ -5,6 +5,8 @@ public interface Map {
 
     Object get(Object key);
 
+    Object remove(Object key);
+
     int size();
 
     boolean isEmpty();

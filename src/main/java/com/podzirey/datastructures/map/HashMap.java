@@ -1,9 +1,6 @@
 package com.podzirey.datastructures.map;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
 
 public class HashMap implements Map {
     private static final int INITIAL_CAPACITY = 5;
@@ -18,9 +15,11 @@ public class HashMap implements Map {
     public Object put(Object key, Object value) {
         Object oldValue = null;
         boolean updated = false;
-
         int index = calculateIndex(key);
 
+        if (buckets[index] == null) {
+            buckets[index] = new ArrayList<>();
+        }
         for (Entry entry : buckets[index]) {
             if (entry.key.equals(key)) {
                 oldValue = entry.value;
@@ -40,9 +39,30 @@ public class HashMap implements Map {
     @Override
     public Object get(Object key) {
         int index = calculateIndex(key);
+        if (buckets[index] == null) {
+            return null;
+        }
         for (Entry entry : buckets[index]) {
             if (entry.key.equals(key)) {
                 return entry.value;
+            }
+        }
+        return null;
+    }
+
+    @Override
+    public Object remove(Object key) {
+        int index = calculateIndex(key);
+        if (buckets[index] == null) {
+            return null;
+        }
+        Object oldValue;
+        for (Entry entry : buckets[index]) {
+            if (entry.key.equals(key)) {
+                oldValue = entry.value;
+                entry.value = null;
+                size--;
+                return oldValue;
             }
         }
         return null;
@@ -61,6 +81,10 @@ public class HashMap implements Map {
     @Override
     public boolean containsKey(Object key) {
         int index = calculateIndex(key);
+        if (buckets[index] == null) {
+            buckets[index] = new ArrayList<>();
+        }
+
         for (Entry entry : buckets[index]) {
             if (entry.key.equals(key)) {
                 return true;
