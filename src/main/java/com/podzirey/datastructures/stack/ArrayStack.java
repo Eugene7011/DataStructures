@@ -1,14 +1,14 @@
 package com.podzirey.datastructures.stack;
 
-public class ArrayStack implements Stack{
+public class ArrayStack implements Stack {
     private int size;
     private Object[] array;
 
-    public ArrayStack(){
+    public ArrayStack() {
         array = new Object[10];
     }
 
-    public ArrayStack(int initialCapacity){
+    public ArrayStack(int initialCapacity) {
         array = new Object[initialCapacity];
     }
 
@@ -19,19 +19,17 @@ public class ArrayStack implements Stack{
         size++;
     }
 
-    private void ensureCapacity(){
-        if(array.length == size){
+    private void ensureCapacity() {
+        if (array.length == size) {
             Object[] newArray = new Object[array.length * 2];
-            for (int i = 0; i < array.length; i++) {
-                newArray[i] = array[i];
-            }
+            System.arraycopy(array, 0, newArray, 0, size);
             array = newArray;
         }
     }
 
     @Override
     public Object pop() {
-        if(isEmpty()){
+        if (isEmpty()) {
             throw new IllegalStateException("Stack is Empty!");
         }
         Object result = array[size - 1];
@@ -48,7 +46,7 @@ public class ArrayStack implements Stack{
     public boolean contains(Object value) {
         for (int i = 0; i < size; i++) {
             Object valueInStack = array[i];
-            if (value.equals(valueInStack)){
+            if (value.equals(valueInStack)) {
                 return true;
             }
         }
@@ -67,6 +65,9 @@ public class ArrayStack implements Stack{
 
     @Override
     public void clear() {
+        for (Object o : array) {
+            o = null;
+        }
         size = 0;
     }
 }

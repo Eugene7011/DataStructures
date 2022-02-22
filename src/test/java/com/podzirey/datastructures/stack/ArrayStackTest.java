@@ -8,7 +8,7 @@ import static org.junit.jupiter.api.Assertions.*;
 public class ArrayStackTest {
 
     @Test
-    public void testPushAndPopWorkCorrectlyAndChangeSize(){
+    public void testPushAndPopWorkCorrectlyAndChangeSize() {
         ArrayStack arrayStack = new ArrayStack();
         arrayStack.push("A");
         arrayStack.push("B");
@@ -18,11 +18,10 @@ public class ArrayStackTest {
         assertEquals("A", arrayStack.pop());
         assertEquals(0, arrayStack.size());
         assertTrue(arrayStack.isEmpty());
-
     }
 
     @Test
-    public void testPushOverInitialCapacityAndPopWorkCorrectlyAndChangeSize(){
+    public void testPushOverInitialCapacityAndPopWorkCorrectlyAndChangeSize() {
         ArrayStack arrayStack = new ArrayStack(2);
         arrayStack.push("A");
         arrayStack.push("B");
@@ -36,11 +35,10 @@ public class ArrayStackTest {
 
         assertEquals(0, arrayStack.size());
         assertTrue(arrayStack.isEmpty());
-
     }
 
     @Test
-    public void testPushAndPeek(){
+    public void testPushAndPeek() {
         ArrayStack arrayStack = new ArrayStack();
         arrayStack.push("A");
         arrayStack.push("B");
@@ -52,14 +50,13 @@ public class ArrayStackTest {
     }
 
     @Test
-    public void testIsEmptyReturnTrueOnNewStack(){
+    public void testIsEmptyReturnTrueOnNewStack() {
         ArrayStack arrayStack = new ArrayStack();
-
         assertTrue(arrayStack.isEmpty());
     }
 
     @Test
-    public void testIsEmptyReturnFalseOnStackWithData(){
+    public void testIsEmptyReturnFalseOnStackWithData() {
         ArrayStack arrayStack = new ArrayStack();
         arrayStack.push("A");
 
@@ -67,18 +64,17 @@ public class ArrayStackTest {
     }
 
     @Test
-    public void testIsEmptyReturnTrueOnStackAfterClear(){
+    public void testIsEmptyReturnTrueOnStackAfterClear() {
         ArrayStack arrayStack = new ArrayStack();
         arrayStack.push("A");
         arrayStack.push("B");
 
         arrayStack.clear();
-
         assertTrue(arrayStack.isEmpty());
     }
 
     @Test
-    public void testContainsReturnTrue(){
+    public void testContainsReturnTrue() {
         ArrayStack arrayStack = new ArrayStack();
         arrayStack.push("A");
         arrayStack.push("B");
@@ -87,7 +83,7 @@ public class ArrayStackTest {
     }
 
     @Test
-    public void testContainsReturnFalse(){
+    public void testContainsReturnFalse() {
         ArrayStack arrayStack = new ArrayStack();
         arrayStack.push("A");
         arrayStack.push("B");
@@ -96,14 +92,13 @@ public class ArrayStackTest {
     }
 
     @Test
-    public void testContainsReturnFalseOnEmptyStack(){
+    public void testContainsReturnFalseOnEmptyStack() {
         ArrayStack arrayStack = new ArrayStack();
-
         assertFalse(arrayStack.contains("C"));
     }
 
     @Test
-    public void testThrowIllegalStateExceptionWhenPopOnEmptyStack(){
+    public void testThrowIllegalStateExceptionWhenPopOnEmptyStack() {
         ArrayStack arrayStack = new ArrayStack();
         Assertions.assertThrows(IllegalStateException.class, () -> {
             arrayStack.pop();

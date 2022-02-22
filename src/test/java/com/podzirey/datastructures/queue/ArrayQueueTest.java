@@ -1,6 +1,5 @@
 package com.podzirey.datastructures.queue;
 
-import com.podzirey.datastructures.queue.ArrayQueue;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
@@ -51,7 +50,6 @@ public class ArrayQueueTest {
         arrayQueue.enqueue("W");
 
         arrayQueue.clear();
-
         assertTrue(arrayQueue.isEmpty());
     }
 
@@ -61,7 +59,6 @@ public class ArrayQueueTest {
         arrayQueue.enqueue("Q");
 
         assertTrue(arrayQueue.contains("Q"));
-
     }
 
     @Test
@@ -70,13 +67,11 @@ public class ArrayQueueTest {
         arrayQueue.enqueue("Q");
 
         assertFalse(arrayQueue.contains("J"));
-
     }
 
     @Test
     public void testContainsReturnFalseOnEmptyQueue(){
         ArrayQueue arrayQueue = new ArrayQueue();
-
         assertFalse(arrayQueue.contains("SHO"));
     }
 
@@ -87,8 +82,7 @@ public class ArrayQueueTest {
         arrayQueue.enqueue("W");
         arrayQueue.enqueue("E");
 
-        assertEquals("[Q, W, E]", arrayQueue.toString());
-
+        assertEquals("[Q,W,E,null,null,null,null]", arrayQueue.toString());
     }
 
     @Test

@@ -1,5 +1,7 @@
 package com.podzirey.datastructures.map;
 
+import java.util.List;
+
 public interface Map {
     Object put(Object key, Object value);
 
@@ -12,4 +14,12 @@ public interface Map {
     boolean isEmpty();
 
     boolean containsKey(Object key);
+
+    Object putIfAbsent(Object key, Object value);
+
+    void putAll(HashMap map);
+
+    List key();
+
+    List values();
 }

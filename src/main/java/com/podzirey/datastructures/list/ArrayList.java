@@ -1,16 +1,15 @@
 package com.podzirey.datastructures.list;
 
 import java.util.Iterator;
-import java.util.StringJoiner;
+import java.util.NoSuchElementException;
+import java.util.Objects;
 
-public class ArrayList<T> implements List<T>, Iterable<T> {
+public class ArrayList<T> extends AbstractList<T> {
     private static final int DEFAULT_INITIAL_CAPACITY = 10;
-
     private T[] array;
-    private int size;
 
     public ArrayList() {
-        this(DEFAULT_INITIAL_CAPACITY);
+        array = (T[]) new Object[DEFAULT_INITIAL_CAPACITY];
     }
 
     public ArrayList(int capacity) {
@@ -18,8 +17,17 @@ public class ArrayList<T> implements List<T>, Iterable<T> {
     }
 
     @Override
-    public void add(T value) {
-        add(value, size);
+    public void add(T value, int index) {
+        if (index < 0 || index > size) {
+            if (size == 0) {
+                throw new IndexOutOfBoundsException("Index is " + index + " but should be [0] because list is empty now");
+            }
+            throw new IndexOutOfBoundsException("Index is " + index + " but should be in range [0," + (size - 1) + "]");
+        }
+        growIfNoCapacity();
+        System.arraycopy(array, index, array, index + 1, size - index);
+        array[index] = value;
+        size++;
     }
 
     private void growIfNoCapacity() {
@@ -28,23 +36,6 @@ public class ArrayList<T> implements List<T>, Iterable<T> {
             T[] newArray = (T[]) new Object[(int) newCapacity];
             System.arraycopy(array, 0, newArray, 0, array.length);
             array = newArray;
-        }
-    }
-
-    @Override
-    public void add(T value, int index) {
-        if (index < 0 || index > size) {
-            throw new IndexOutOfBoundsException("Index should be in range [0] - [size]");
-        }
-        growIfNoCapacity();
-        System.arraycopy(array, index, array, index + 1, size - index);
-        array[index] = value;
-        size++;
-    }
-
-    private void checkIfIndexIsInBounds(int index) {
-        if (index < 0 || index > size - 1) {
-            throw new IndexOutOfBoundsException("Index should be in range [0] - [size - 1]");
         }
     }
 
@@ -83,22 +74,14 @@ public class ArrayList<T> implements List<T>, Iterable<T> {
     }
 
     @Override
-    public int size() {
-        return size;
-    }
-
-    @Override
-    public boolean isEmpty() {
-        return size == 0;
-    }
-
-    @Override
-    public boolean contains(T value) {
-        return indexOf(value) >= 0;
-    }
-
-    @Override
     public int indexOf(T value) {
+        if (Objects.isNull(value)) {
+            for (int i = 0; i < size; i++) {
+                if (array[i] == null) {
+                    return i;
+                }
+            }
+        }
         for (int i = 0; i < size; i++) {
             if (array[i].equals(value)) {
                 return i;
@@ -110,21 +93,19 @@ public class ArrayList<T> implements List<T>, Iterable<T> {
     @Override
     public int lastIndexOf(T value) {
         int result = -1;
-        for (int i = 0; i < size; i++) {
-            if (array[i].equals(value))
-                result = i;
+        if (Objects.isNull(value)) {
+            for (int i = size - 1; i >= 0; i--) {
+                if (array[i] == null) {
+                    return i;
+                }
+            }
+        }
+        for (int i = size - 1; i >= 0; i--) {
+            if (array[i].equals(value)) {
+                return i;
+            }
         }
         return result;
-    }
-
-    @Override
-    public String toString() {
-        StringJoiner stringJoiner = new StringJoiner(",", "[", "]");
-
-        for (T value : this) {
-            stringJoiner.add(String.valueOf(value));
-        }
-        return stringJoiner.toString();
     }
 
     @Override
@@ -134,7 +115,7 @@ public class ArrayList<T> implements List<T>, Iterable<T> {
 
     class MyIterator implements Iterator<T> {
         private int index = 0;
-        boolean canRemove;
+        private boolean canRemove;
 
         @Override
         public boolean hasNext() {
@@ -143,6 +124,9 @@ public class ArrayList<T> implements List<T>, Iterable<T> {
 
         @Override
         public T next() {
+            if (!hasNext()) {
+                throw new NoSuchElementException("There is no next element is the List");
+            }
             T value = array[index];
             index++;
             canRemove = true;
@@ -151,11 +135,10 @@ public class ArrayList<T> implements List<T>, Iterable<T> {
 
         @Override
         public void remove() {
-            if (canRemove) {
-                ArrayList.this.remove(index - 1);
-            } else {
-                throw new IllegalArgumentException("Already removed");
+            if (!canRemove) {
+                throw new IllegalStateException("Already removed");
             }
+            ArrayList.this.remove(index - 1);
             canRemove = false;
             index--;
         }

@@ -1,14 +1,16 @@
 package com.podzirey.datastructures.queue;
 
-public class ArrayQueue implements Queue{
+import java.util.StringJoiner;
+
+public class ArrayQueue implements Queue {
     private int size;
     private Object[] array;
 
-    public ArrayQueue(){
+    public ArrayQueue() {
         array = new Object[7];
     }
 
-    public ArrayQueue(int initialCapacity){
+    public ArrayQueue(int initialCapacity) {
         array = new Object[initialCapacity];
     }
 
@@ -19,25 +21,21 @@ public class ArrayQueue implements Queue{
         size++;
     }
 
-    private void ensureCapacity(){
-        if(array.length == size){
+    private void ensureCapacity() {
+        if (array.length == size) {
             Object[] newArray = new Object[array.length * 2];
-            for (int i = 0; i < array.length; i++) {
-                newArray[i] = array[i];
-            }
+            System.arraycopy(array, 0, newArray, 0, size);
             array = newArray;
         }
     }
 
     @Override
     public Object dequeue() {
-        if(isEmpty()){
+        if (isEmpty()) {
             throw new IllegalStateException("Queue is Empty!");
         }
         Object result = array[0];
-        for (int i = 0; i < size - 1; i++) {
-            array[i] = array[i + 1];
-        }
+        System.arraycopy(array, 1, array, 0, size - 1);
         size--;
         return result;
     }
@@ -54,7 +52,7 @@ public class ArrayQueue implements Queue{
     }
 
     @Override
-    public boolean isEmpty(){
+    public boolean isEmpty() {
         return size == 0;
     }
 
@@ -62,7 +60,7 @@ public class ArrayQueue implements Queue{
     public boolean contains(Object value) {
         for (int i = 0; i < size; i++) {
             Object valueInQueue = array[i];
-            if(value.equals(valueInQueue)){
+            if (value.equals(valueInQueue)) {
                 return true;
             }
         }
@@ -71,23 +69,19 @@ public class ArrayQueue implements Queue{
 
     @Override
     public void clear() {
-        for (int i = 0; i < size; i++) {
-            array[i] = null;
+        for (Object o : array) {
+            o = null;
         }
         size = 0;
     }
 
     @Override
-    public String toString(){
-        String result = "[" ;
-        for (int i = 0; i < size; i++) {
-            String temp = String.valueOf(array[i]);
-            result = result + temp;
-            if(i < size -1){
-                result = result + ", ";
-            }
-        }
+    public String toString() {
+        StringJoiner stringJoiner = new StringJoiner(",", "[", "]");
 
-        return result + "]";
+        for (Object value : array) {
+            stringJoiner.add(String.valueOf(value));
+        }
+        return stringJoiner.toString();
     }
 }

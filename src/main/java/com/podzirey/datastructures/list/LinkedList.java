@@ -1,31 +1,22 @@
 package com.podzirey.datastructures.list;
 
+import java.util.HashMap;
 import java.util.Iterator;
+import java.util.NoSuchElementException;
 import java.util.Objects;
-import java.util.StringJoiner;
 
-public class LinkedList<T> implements List<T>, Iterable<T> {
+public class LinkedList<T> extends AbstractList<T> {
 
     private Node<T> head;
     private Node<T> tail;
-    private int size;
-
-    @Override
-    public void add(T value) {
-
-        add(value, size);
-    }
-
-    private void checkIfIndexIsInBounds(int index) {
-        if (index < 0 || index > size - 1) {
-            throw new IndexOutOfBoundsException("Index should be in range [0] - [size - 1]");
-        }
-    }
 
     @Override
     public void add(T value, int index) {
         if (index < 0 || index > size) {
-            throw new IndexOutOfBoundsException("Index should be in range [0] - [size]");
+            if (size == 0) {
+                throw new IndexOutOfBoundsException("Index is " + index + " but should be [0] because list is empty now");
+            }
+            throw new IndexOutOfBoundsException("Index is " + index + " but should be in range [0," + size + "]");
         }
 
         Node<T> newNode = new Node<>(value);
@@ -52,10 +43,9 @@ public class LinkedList<T> implements List<T>, Iterable<T> {
     }
 
     private Node<T> getNode(int index) {
-        checkIfIndexIsInBounds(index);
         Node<T> nodeByIndex;
 
-        if (index < (size / 2)) {
+        if (index < size / 2) {
             nodeByIndex = head;
             for (int i = 0; i < index; i++) {
                 nodeByIndex = nodeByIndex.next;
@@ -93,6 +83,7 @@ public class LinkedList<T> implements List<T>, Iterable<T> {
 
     @Override
     public T get(int index) {
+        checkIfIndexIsInBounds(index);
         return getNode(index).value;
     }
 
@@ -111,23 +102,16 @@ public class LinkedList<T> implements List<T>, Iterable<T> {
     }
 
     @Override
-    public int size() {
-        return size;
-    }
-
-    @Override
-    public boolean isEmpty() {
-        return size == 0;
-    }
-
-    @Override
-    public boolean contains(T value) {
-        return indexOf(value) != -1;
-    }
-
-    @Override
     public int indexOf(Object value) {
         Node<T> current = head;
+        if (Objects.isNull(value)) {
+            for (int i = 0; i < size; i++) {
+                if (current.value == null) {
+                    return i;
+                }
+                current = current.next;
+            }
+        }
         for (int i = 0; i < size; i++) {
             if (Objects.equals(current.value, value)) {
                 return i;
@@ -139,8 +123,15 @@ public class LinkedList<T> implements List<T>, Iterable<T> {
 
     @Override
     public int lastIndexOf(T value) {
-
         Node<T> current = tail;
+        if (Objects.isNull(value)) {
+            for (int i = 0; i < size; i++) {
+                if (current.value == null) {
+                    return i;
+                }
+                current = current.next;
+            }
+        }
         for (int i = size - 1; i >= 0; i--) {
             if (Objects.equals(current.value, value)) {
                 return i;
@@ -151,35 +142,27 @@ public class LinkedList<T> implements List<T>, Iterable<T> {
     }
 
     @Override
-    public String toString() {
-
-        StringJoiner stringJoiner = new StringJoiner(",", "[", "]");
-
-        for (T value : this) {
-            stringJoiner.add(String.valueOf(value));
-        }
-        return stringJoiner.toString();
-    }
-
-    @Override
     public Iterator<T> iterator() {
         return new MyIterator();
     }
 
     public class MyIterator implements Iterator<T> {
         private int index;
+        Node<T> current = head;
         private boolean canRemove;
 
         @Override
         public boolean hasNext() {
-            return index < size;
+            return current != null;
         }
 
         @Override
         public T next() {
-            Node<T> current = getNode(index);
+            if (!hasNext()) {
+                throw new NoSuchElementException("There is no next element is the List");
+            }
             T value = current.value;
-            index++;
+            current = current.next;
             canRemove = true;
             return value;
         }
@@ -187,7 +170,7 @@ public class LinkedList<T> implements List<T>, Iterable<T> {
         @Override
         public void remove() {
             if (!canRemove) {
-                throw new IllegalArgumentException("Already removed");
+                throw new IllegalStateException("Already removed");
             }
             LinkedList.this.remove(index - 1);
             index--;
@@ -203,6 +186,5 @@ public class LinkedList<T> implements List<T>, Iterable<T> {
         private Node(T value) {
             this.value = value;
         }
-
     }
 }

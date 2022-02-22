@@ -3,7 +3,7 @@ package com.podzirey.datastructures.list;
 public class ArrayListTest extends AbstractListTest{
 
     @Override
-    protected List getList() {
-        return new ArrayList();
+    protected List<Integer> getList() {
+        return new ArrayList<>();
     }
 }

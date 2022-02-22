@@ -9,7 +9,7 @@ import java.util.Iterator;
 import static org.junit.jupiter.api.Assertions.*;
 
 public abstract class AbstractListTest {
-    private List list;
+    private List<Integer> list;
 
     @BeforeEach
     public void before() {
@@ -20,7 +20,6 @@ public abstract class AbstractListTest {
 
     @Test
     public void testLastIndexOf() {
-
         list.add(1);
         list.add(1);
         list.add(4);
@@ -31,12 +30,10 @@ public abstract class AbstractListTest {
         assertEquals(4, list.lastIndexOf(4));
         assertEquals(1, list.lastIndexOf(1));
         assertEquals(5, list.lastIndexOf(2));
-
     }
 
     @Test
     public void testCheckSizeAfterClear() {
-
         list.add(1);
         list.add(2);
         assertEquals(2, list.size());
@@ -47,7 +44,6 @@ public abstract class AbstractListTest {
 
     @Test
     public void testAddSetRemoveWorksCorrect() {
-
         list.add(1);
         list.add(2);
         list.add(3);
@@ -59,13 +55,10 @@ public abstract class AbstractListTest {
         assertEquals(2, list.size());
         assertEquals(7, list.get(0));
         list.remove(0);
-
-
     }
 
     @Test
     public void testVerifyNull() {
-
         list.add(1);
         list.add(null);
         list.add(3);
@@ -74,7 +67,6 @@ public abstract class AbstractListTest {
 
     @Test
     public void testVerifyToString() {
-
         list.add(1);
         list.add(2);
         list.add(3);
@@ -84,7 +76,6 @@ public abstract class AbstractListTest {
 
     @Test
     public void testAddByIndexWorksCorrect() {
-
         list.add(1);
         list.add(2);
         list.add(3);
@@ -99,7 +90,6 @@ public abstract class AbstractListTest {
 
     @Test
     public void testRemoveWorksCorrect() {
-
         list.add(1);
         list.add(2);
         list.add(3);
@@ -116,7 +106,6 @@ public abstract class AbstractListTest {
 
     @Test
     public void testIsEmptyWorksCorrect() {
-
         list.add(1);
         list.add(2);
         list.add(3);
@@ -129,7 +118,6 @@ public abstract class AbstractListTest {
 
     @Test
     public void testObjectContainsAfterAddAndRemove() {
-
         list.add(1);
         list.add(2);
         list.add(3);
@@ -142,7 +130,6 @@ public abstract class AbstractListTest {
 
     @Test
     public void testIndexOfWorksCorrect() {
-
         list.add(1);
         list.add(2);
         list.add(3);
@@ -155,8 +142,17 @@ public abstract class AbstractListTest {
     }
 
     @Test
-    public void testIteratorWorksCorrect() {
+    public void testIndexOfWorksCorrectWithNull() {
+        list.add(1);
+        list.add(2);
+        list.add(3);
+        list.add(null);
 
+        assertEquals(3, list.indexOf(null));
+    }
+
+    @Test
+    public void testIteratorWorksCorrect() {
         list.add(1);
         list.add(2);
         Iterator<Integer> iterator = list.iterator();
@@ -169,7 +165,6 @@ public abstract class AbstractListTest {
 
     @Test
     public void testGetThrowIndexOutOfBoundsExceptionOnEmptyList() {
-
         Assertions.assertThrows(IndexOutOfBoundsException.class, () -> {
             list.clear();
             list.get(0);
@@ -178,7 +173,6 @@ public abstract class AbstractListTest {
 
     @Test
     public void testSetThrowIndexOutOfBoundsExceptionOnEmptyList() {
-
         Assertions.assertThrows(IndexOutOfBoundsException.class, () -> {
             list.clear();
             list.set(0, 0);
@@ -187,7 +181,6 @@ public abstract class AbstractListTest {
 
     @Test
     public void testRemoveThrowIndexOutOfBoundsExceptionOnEmptyList() {
-
         Assertions.assertThrows(IndexOutOfBoundsException.class, () -> {
             list.clear();
             list.remove(0);
@@ -196,7 +189,6 @@ public abstract class AbstractListTest {
 
     @Test
     public void testGetThrowIndexOutOfBoundsExceptionWhenIndexIsNegative() {
-
         Assertions.assertThrows(IndexOutOfBoundsException.class, () -> {
             list.add(1);
             list.add(2);
@@ -206,7 +198,6 @@ public abstract class AbstractListTest {
 
     @Test
     public void testRemoveThrowIndexOutOfBoundsExceptionWhenIndexIsBiggerThanSize() {
-
         Assertions.assertThrows(IndexOutOfBoundsException.class, () -> {
             list.add(2);
             list.add(2);
@@ -217,15 +208,15 @@ public abstract class AbstractListTest {
 
     @Test
     public void testAddThrowIndexOutOfBoundsExceptionWhenIndexIsOutOfSize() {
-
-        Assertions.assertThrows(IndexOutOfBoundsException.class, () -> {
-            list.add(2, 2);
-        });
+        IndexOutOfBoundsException indexOutOfBoundsException =
+                assertThrows(IndexOutOfBoundsException.class, () -> {
+                    list.add(2, 2);
+                });
+        assertEquals("Index is 2 but should be [0] because list is empty now", indexOutOfBoundsException.getMessage());
     }
 
     @Test
     public void testContainsThrowIndexOutOfBoundsExceptionWhenIndexIsOutOfSize() {
-
         Assertions.assertThrows(IndexOutOfBoundsException.class, () -> {
             list.add(1, -2);
         });
