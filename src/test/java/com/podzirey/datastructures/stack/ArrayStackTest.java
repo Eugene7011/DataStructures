@@ -87,7 +87,6 @@ public class ArrayStackTest {
         ArrayStack arrayStack = new ArrayStack();
         arrayStack.push("A");
         arrayStack.push("B");
-
         assertFalse(arrayStack.contains("C"));
     }
 
