@@ -19,7 +19,7 @@ public interface Map {
 
     void putAll(HashMap map);
 
-    List key();
+    List keys();
 
     List values();
 }

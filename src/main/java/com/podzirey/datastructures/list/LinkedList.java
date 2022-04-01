@@ -1,6 +1,5 @@
 package com.podzirey.datastructures.list;
 
-import java.util.HashMap;
 import java.util.Iterator;
 import java.util.NoSuchElementException;
 import java.util.Objects;
@@ -12,12 +11,7 @@ public class LinkedList<T> extends AbstractList<T> {
 
     @Override
     public void add(T value, int index) {
-        if (index < 0 || index > size) {
-            if (size == 0) {
-                throw new IndexOutOfBoundsException("Index is " + index + " but should be [0] because list is empty now");
-            }
-            throw new IndexOutOfBoundsException("Index is " + index + " but should be in range [0," + size + "]");
-        }
+        validateIndexForAdd(index);
 
         Node<T> newNode = new Node<>(value);
         if (size == 0) {
@@ -61,35 +55,39 @@ public class LinkedList<T> extends AbstractList<T> {
 
     @Override
     public T remove(int index) {
-        checkIfIndexIsInBounds(index);
+        validateExistingIndex(index);
         Node<T> removedNode = getNode(index);
+        removeNode(removedNode);
+        return removedNode.value;
+    }
+
+    private void removeNode(Node node){
         if (size == 1) {
             head = tail = null;
-        } else if (index == 0) {
-            head = removedNode.next;
+        } else if (node == head) {
+            head = node.next;
             head.prev = null;
-        } else if (index == size - 1) {
-            tail = removedNode.prev;
+        } else if (node == tail) {
+            tail = node.prev;
             tail.next = null;
         } else {
-            Node<T> prevNode = removedNode.prev;
-            Node<T> nextNode = removedNode.next;
+            Node<T> prevNode = node.prev;
+            Node<T> nextNode = node.next;
             prevNode.next = nextNode;
             nextNode.prev = prevNode;
         }
         size--;
-        return removedNode.value;
     }
 
     @Override
     public T get(int index) {
-        checkIfIndexIsInBounds(index);
+        validateExistingIndex(index);
         return getNode(index).value;
     }
 
     @Override
     public T set(T value, int index) {
-        checkIfIndexIsInBounds(index);
+        validateExistingIndex(index);
         T oldObject = get(index);
         getNode(index).value = value;
         return oldObject;
@@ -147,8 +145,7 @@ public class LinkedList<T> extends AbstractList<T> {
     }
 
     public class MyIterator implements Iterator<T> {
-        private int index;
-        Node<T> current = head;
+        private Node<T> current = head;
         private boolean canRemove;
 
         @Override
@@ -172,8 +169,7 @@ public class LinkedList<T> extends AbstractList<T> {
             if (!canRemove) {
                 throw new IllegalStateException("Already removed");
             }
-            LinkedList.this.remove(index - 1);
-            index--;
+            removeNode(current);
             canRemove = false;
         }
     }

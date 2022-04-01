@@ -9,7 +9,7 @@ public class ArrayList<T> extends AbstractList<T> {
     private T[] array;
 
     public ArrayList() {
-        array = (T[]) new Object[DEFAULT_INITIAL_CAPACITY];
+        this(DEFAULT_INITIAL_CAPACITY);
     }
 
     public ArrayList(int capacity) {
@@ -18,12 +18,7 @@ public class ArrayList<T> extends AbstractList<T> {
 
     @Override
     public void add(T value, int index) {
-        if (index < 0 || index > size) {
-            if (size == 0) {
-                throw new IndexOutOfBoundsException("Index is " + index + " but should be [0] because list is empty now");
-            }
-            throw new IndexOutOfBoundsException("Index is " + index + " but should be in range [0," + (size - 1) + "]");
-        }
+        validateIndexForAdd(index);
         growIfNoCapacity();
         System.arraycopy(array, index, array, index + 1, size - index);
         array[index] = value;
@@ -33,6 +28,7 @@ public class ArrayList<T> extends AbstractList<T> {
     private void growIfNoCapacity() {
         if (size == array.length) {
             double newCapacity = array.length * 1.5 + 1;
+            @SuppressWarnings("unchecked")
             T[] newArray = (T[]) new Object[(int) newCapacity];
             System.arraycopy(array, 0, newArray, 0, array.length);
             array = newArray;
@@ -41,7 +37,7 @@ public class ArrayList<T> extends AbstractList<T> {
 
     @Override
     public T remove(int index) {
-        checkIfIndexIsInBounds(index);
+        validateExistingIndex(index);
         T removed = array[index];
         if (index != size - 1) {
             System.arraycopy(array, index + 1, array, index, size - index - 1);
@@ -53,13 +49,13 @@ public class ArrayList<T> extends AbstractList<T> {
 
     @Override
     public T get(int index) {
-        checkIfIndexIsInBounds(index);
+        validateExistingIndex(index);
         return array[index];
     }
 
     @Override
     public T set(T value, int index) {
-        checkIfIndexIsInBounds(index);
+        validateExistingIndex(index);
         T old = array[index];
         array[index] = value;
         return old;
@@ -81,10 +77,14 @@ public class ArrayList<T> extends AbstractList<T> {
                     return i;
                 }
             }
-        }
-        for (int i = 0; i < size; i++) {
-            if (array[i].equals(value)) {
-                return i;
+        } else {
+            for (int i = 0; i < size; i++) {
+                if (array[i] == null) {
+                    continue;
+                }
+                if (array[i].equals(value)) {
+                    return i;
+                }
             }
         }
         return -1;

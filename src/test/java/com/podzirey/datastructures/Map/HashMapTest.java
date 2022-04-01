@@ -2,7 +2,6 @@ package com.podzirey.datastructures.Map;
 
 import com.podzirey.datastructures.map.HashMap;
 
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -12,7 +11,6 @@ public class HashMapTest {
 
     @Test
     public void testPut() {
-
         assertNull(hashMap.put("key1", "value1"));
         assertEquals(1, hashMap.size());
 
@@ -68,6 +66,13 @@ public class HashMapTest {
         assertNull(hashMap.put("key6", "value6"));
         assertEquals(6, hashMap.size());
         assertNull(hashMap.get("null"));
+
+        assertEquals("value6", hashMap.get("key6"));
+        assertEquals("value5", hashMap.get("key5"));
+        assertEquals("value4", hashMap.get("key4"));
+        assertEquals("value3", hashMap.get("key3"));
+        assertEquals("value2", hashMap.get("key2"));
+        assertEquals("value1", hashMap.get("key1"));
     }
 
     @Test
@@ -129,27 +134,27 @@ public class HashMapTest {
         hashMap.put("key2", "value2");
         hashMap.put("key3", "value3");
 
-        assertEquals(3, hashMap.key().size());
-        assertTrue(hashMap.key().contains("key1"));
-        assertTrue(hashMap.key().contains("key2"));
-        assertTrue(hashMap.key().contains("key3"));
+        assertEquals(3, hashMap.keys().size());
+        assertTrue(hashMap.keys().contains("key1"));
+        assertTrue(hashMap.keys().contains("key2"));
+        assertTrue(hashMap.keys().contains("key3"));
     }
 
     @Test
     public void givenEmptyHashMapWhenPutNullKeyThenKeyListShouldContainNull() {
         hashMap.put("null", "null");
 
-        assertTrue(hashMap.key().contains("null"));
+        assertTrue(hashMap.keys().contains("null"));
     }
 
     @Test
     public void testValuesGeneralCase() {
         hashMap.put("key1", "value1");
-        assertEquals("[key1]", hashMap.key().toString());
+        assertEquals("[key1]", hashMap.keys().toString());
         hashMap.put("key2", "value2");
         hashMap.put("key3", "value3");
 
-        assertEquals(3, hashMap.key().size());
+        assertEquals(3, hashMap.keys().size());
         assertTrue(hashMap.values().contains("value1"));
         assertTrue(hashMap.values().contains("value2"));
         assertTrue(hashMap.values().contains("value3"));
@@ -177,19 +182,22 @@ public class HashMapTest {
 
     @Test
     public void testPutAll() {
-        hashMap.put("key1", "value1");
-        hashMap.put("key2", "value2");
-        hashMap.put("key3", "value3");
+//        hashMap.put("key1", "value1");
+//        hashMap.put("key2", "value2");
+//        hashMap.put("key3", "value3");
 
         HashMap extraHashMap = new HashMap();
         extraHashMap.put("KEY1", "VALUE1");
-        extraHashMap.put("KEY2", "VALUE3");
+        extraHashMap.put("KEY2", "VALUE2");
         extraHashMap.put("KEY3", "VALUE3");
+        extraHashMap.put("KEY4", "VALUE4");
+        extraHashMap.put("KEY5", "VALUE5");
+        extraHashMap.put("KEY6", "VALUE6");
         hashMap.putAll(extraHashMap);
 
         assertEquals(6, hashMap.size());
         assertEquals("VALUE1", hashMap.get("KEY1"));
-        assertTrue(hashMap.containsKey("KEY2"));
+        //assertTrue(hashMap.containsKey("KEY2"));
         assertEquals("VALUE3", hashMap.remove("KEY3"));
     }
 }

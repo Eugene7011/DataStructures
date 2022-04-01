@@ -221,4 +221,13 @@ public abstract class AbstractListTest {
             list.add(1, -2);
         });
     }
+
+    @Test
+    public void testIndexOfReturnsMinusOneOnNotExistingElement() {
+        list.add(1);
+        list.add(null);
+        list.add(3);
+
+        assertEquals(-1, list.indexOf(4));
+    }
 }

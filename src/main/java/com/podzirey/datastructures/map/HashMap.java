@@ -2,10 +2,10 @@ package com.podzirey.datastructures.map;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 public class HashMap implements Map {
     private static final int INITIAL_CAPACITY = 5;
-    private HashMap map;
     private ArrayList<Entry>[] buckets = new ArrayList[INITIAL_CAPACITY];
     private int size;
 
@@ -24,63 +24,76 @@ public class HashMap implements Map {
 
     @Override
     public Object put(Object key, Object value) {
-        ArrayList<Entry> bucket = buckets[calculateIndex(key)];
+        List<Entry> bucket = buckets[calculateIndex(key)];
         Entry newEntry = new Entry(key, value);
-        int index = indexOfEntryInBucketByKey(key);
         Object result;
-        if (index == -1) {
+        if (!containsKey(key)) {
             increaseHashMapCapacityIfNeeded();
             bucket.add(newEntry);
             result = null;
             size++;
         } else {
-            Entry oldEntry = bucket.get(index);
+            Entry oldEntry = getEntry(key);
             result = oldEntry.value;
             oldEntry.value = value;
         }
         return result;
     }
 
+    private Entry getEntry(Object key) {
+        List<Entry> bucket = buckets[calculateIndex(key)];
+        for (Entry entry : bucket) {
+            if (Objects.equals(entry.key, key)) {
+                return entry;
+            }
+        }
+        return null;
+    }
+
     private void increaseHashMapCapacityIfNeeded() {
         if (buckets.length * 0.75 < size) {
             int doubleCapacity = buckets.length * 2;
-            HashMap increasedHashMap = new HashMap(doubleCapacity);
-            increasedHashMap.putAll(this);
-            map = increasedHashMap;
+            ArrayList<Entry>[] newBuckets = new ArrayList[doubleCapacity];
+
+            for (int i = 0; i < newBuckets.length; i++) {
+                newBuckets[i] = new ArrayList<>();
+            }
+
+            for (ArrayList<Entry> bucket : buckets) {
+                for (Entry entry : bucket) {
+                    List<Entry> newBucket = newBuckets[(entry.key).hashCode() % newBuckets.length];
+                    newBucket.add(entry);
+                }
+            }
+            buckets = newBuckets;
         }
     }
 
-    private int indexOfEntryInBucketByKey(Object key) {
-        ArrayList<Entry> bucket = buckets[calculateIndex(key)];
-        List<Object> keysInBucket = new ArrayList<>(bucket.size());
-        for (Entry entry : bucket) {
-            keysInBucket.add(entry.key);
-        }
-        return keysInBucket.indexOf(key);
-    }
-
-    private int calculateIndex(Object key) {
+    int calculateIndex(Object key) {
         return key.hashCode() % buckets.length;
     }
 
     @Override
     public Object get(Object key) {
-        ArrayList<Entry> bucket = buckets[calculateIndex(key)];
-        int index = indexOfEntryInBucketByKey(key);
-        if (index != -1) {
-            return (bucket.get(index)).value;
+        List<Entry> bucket = buckets[calculateIndex(key)];
+        for (Entry entry : bucket) {
+            if (Objects.equals(entry.key, key)) {
+                return entry.value;
+            }
         }
         return null;
     }
 
     @Override
     public Object remove(Object key) {
-        ArrayList<Entry> bucket = buckets[calculateIndex(key)];
-        int index = indexOfEntryInBucketByKey(key);
-        if (index != -1) {
-            Object result = bucket.remove(index);
-            size--;
-            return ((Entry) result).value;
+        List<Entry> bucket = buckets[calculateIndex(key)];
+        for (Entry entry : bucket) {
+            if (Objects.equals(entry.key, key)) {
+                Object result = entry.value;
+                bucket.remove(entry);
+                size--;
+                return result;
+            }
         }
         return null;
     }
@@ -97,7 +110,7 @@ public class HashMap implements Map {
 
     @Override
     public boolean containsKey(Object key) {
-        return indexOfEntryInBucketByKey(key) != -1;
+        return keys().contains(key);
     }
 
     @Override
@@ -119,7 +132,7 @@ public class HashMap implements Map {
     }
 
     @Override
-    public List<Object> key() {
+    public List<Object> keys() {
         List<Object> keys = new ArrayList<>(size);
         for (ArrayList<Entry> bucket : buckets) {
             for (Entry entry : bucket) {

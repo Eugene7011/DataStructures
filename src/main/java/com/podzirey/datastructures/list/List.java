@@ -2,7 +2,7 @@ package com.podzirey.datastructures.list;
 
 import java.util.Iterator;
 
-public interface List<T> {
+public interface List<T> extends Iterable<T>{
 
     void add(T value);
 
