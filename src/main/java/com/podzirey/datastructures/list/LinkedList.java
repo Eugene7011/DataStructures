@@ -61,7 +61,7 @@ public class LinkedList<T> extends AbstractList<T> {
         return removedNode.value;
     }
 
-    private void removeNode(Node node){
+    private void removeNode(Node<T> node) {
         if (size == 1) {
             head = tail = null;
         } else if (node == head) {

@@ -1,19 +1,23 @@
 package com.podzirey.datastructures.stack;
 
-public class ArrayStack implements Stack {
+import java.util.EmptyStackException;
+
+public class ArrayStack<T> implements Stack<T> {
+    private final static int DEFAULT_INITIAL_CAPACITY = 10;
     private int size;
-    private Object[] array;
+    private T[] array;
 
     public ArrayStack() {
-        array = new Object[10];
+        this(DEFAULT_INITIAL_CAPACITY);
     }
 
+    @SuppressWarnings("unchecked")
     public ArrayStack(int initialCapacity) {
-        array = new Object[initialCapacity];
+        this.array = (T[]) new Object[initialCapacity];
     }
 
     @Override
-    public void push(Object value) {
+    public void push(T value) {
         ensureCapacity();
         array[size] = value;
         size++;
@@ -21,31 +25,35 @@ public class ArrayStack implements Stack {
 
     private void ensureCapacity() {
         if (array.length == size) {
-            Object[] newArray = new Object[array.length * 2];
+            @SuppressWarnings("unchecked")
+            T[] newArray = (T[]) new ArrayStack[array.length * 2];
             System.arraycopy(array, 0, newArray, 0, size);
             array = newArray;
         }
     }
 
     @Override
-    public Object pop() {
+    public T pop() {
         if (isEmpty()) {
-            throw new IllegalStateException("Stack is Empty!");
+            throw new EmptyStackException();
         }
-        Object result = array[size - 1];
+        T result = array[size - 1];
         size--;
         return result;
     }
 
     @Override
-    public Object peek() {
+    public T peek() {
+        if (isEmpty()) {
+            throw new EmptyStackException();
+        }
         return array[size - 1];
     }
 
     @Override
-    public boolean contains(Object value) {
+    public boolean contains(T value) {
         for (int i = 0; i < size; i++) {
-            Object valueInStack = array[i];
+            T valueInStack = array[i];
             if (value.equals(valueInStack)) {
                 return true;
             }

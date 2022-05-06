@@ -12,6 +12,7 @@ public class ArrayList<T> extends AbstractList<T> {
         this(DEFAULT_INITIAL_CAPACITY);
     }
 
+    @SuppressWarnings("unchecked")
     public ArrayList(int capacity) {
         array = (T[]) new Object[capacity];
     }
@@ -113,7 +114,7 @@ public class ArrayList<T> extends AbstractList<T> {
         return new MyIterator();
     }
 
-    class MyIterator implements Iterator<T> {
+    private class MyIterator implements Iterator<T> {
         private int index = 0;
         private boolean canRemove;
 

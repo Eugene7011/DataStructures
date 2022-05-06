@@ -1,48 +1,51 @@
 package com.podzirey.datastructures.map;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
 
-public class HashMap implements Map {
+public class HashMap<K, V> implements Map<K, V> {
     private static final int INITIAL_CAPACITY = 5;
-    private ArrayList<Entry>[] buckets = new ArrayList[INITIAL_CAPACITY];
+    private static final double LOAD_LEVEL = 0.75;
+    private static final double INCREASE_STEP = 2;
+
+    private ArrayList<Entry<K, V>>[] buckets;
     private int size;
 
     public HashMap() {
-        for (int i = 0; i < buckets.length; i++) {
-            buckets[i] = new ArrayList<>();
-        }
+        this(INITIAL_CAPACITY);
     }
 
-    public HashMap(int doubleCapacity) {
-        this.buckets = new ArrayList[doubleCapacity];
-        for (int i = 0; i < doubleCapacity; i++) {
-            buckets[i] = new ArrayList<>();
-        }
+    @SuppressWarnings("unchecked")
+    public HashMap(int capacity) {
+        this.buckets = new ArrayList[capacity];
     }
 
     @Override
-    public Object put(Object key, Object value) {
-        List<Entry> bucket = buckets[calculateIndex(key)];
-        Entry newEntry = new Entry(key, value);
-        Object result;
-        if (!containsKey(key)) {
-            increaseHashMapCapacityIfNeeded();
-            bucket.add(newEntry);
-            result = null;
+    public V put(K key, V value) {
+        increaseHashMapCapacityIfNeeded();
+        List<Entry<K, V>> bucket = buckets[calculateIndex(key)];
+        if (bucket == null) {
+            buckets[calculateIndex(key)] = new ArrayList<>(1);
+            buckets[calculateIndex(key)].add(new Entry<>(key, value));
             size++;
-        } else {
-            Entry oldEntry = getEntry(key);
-            result = oldEntry.value;
-            oldEntry.value = value;
+            return null;
         }
-        return result;
+        if (containsKey(key)) {
+            Entry<K, V> oldEntry = getEntry(key);
+            V result = Objects.requireNonNull(oldEntry).value;
+            oldEntry.value = value;
+            return result;
+        }
+        bucket.add(new Entry<>(key, value));
+        size++;
+        return null;
     }
 
-    private Entry getEntry(Object key) {
-        List<Entry> bucket = buckets[calculateIndex(key)];
-        for (Entry entry : bucket) {
+    private Entry<K, V> getEntry(K key) {
+        List<Entry<K, V>> bucket = buckets[calculateIndex(key)];
+        if (bucket == null) {
+            return null;
+        }
+        for (Entry<K, V> entry : bucket) {
             if (Objects.equals(entry.key, key)) {
                 return entry;
             }
@@ -51,32 +54,38 @@ public class HashMap implements Map {
     }
 
     private void increaseHashMapCapacityIfNeeded() {
-        if (buckets.length * 0.75 < size) {
-            int doubleCapacity = buckets.length * 2;
-            ArrayList<Entry>[] newBuckets = new ArrayList[doubleCapacity];
-
-            for (int i = 0; i < newBuckets.length; i++) {
-                newBuckets[i] = new ArrayList<>();
+        if (buckets.length * LOAD_LEVEL < size) {
+            int capacity = (int) (buckets.length * INCREASE_STEP);
+            HashMap<K, V> resizedHashMap = new HashMap<>(capacity);
+            HashMap<K, V> oldHashMap = this;
+            for (Map.Entry<K, V> currentEntry : oldHashMap) {
+                resizedHashMap.put(currentEntry.getKey(), currentEntry.getValue());
             }
-
-            for (ArrayList<Entry> bucket : buckets) {
-                for (Entry entry : bucket) {
-                    List<Entry> newBucket = newBuckets[(entry.key).hashCode() % newBuckets.length];
-                    newBucket.add(entry);
-                }
-            }
-            buckets = newBuckets;
+            buckets = resizedHashMap.buckets;
         }
     }
 
-    int calculateIndex(Object key) {
-        return key.hashCode() % buckets.length;
+    int calculateIndex(K key) {
+        if (key == null) {
+            return 0;
+        }
+        int hashCode = key.hashCode();
+        if (hashCode == Integer.MIN_VALUE) {
+            return 0;
+        }
+        return Math.abs(hashCode) % buckets.length;
     }
 
     @Override
-    public Object get(Object key) {
-        List<Entry> bucket = buckets[calculateIndex(key)];
-        for (Entry entry : bucket) {
+    public V get(K key) {
+        if (isEmpty()) {
+            return null;
+        }
+        List<Entry<K, V>> bucket = buckets[calculateIndex(key)];
+        if (bucket == null) {
+            return null;
+        }
+        for (Entry<K, V> entry : bucket) {
             if (Objects.equals(entry.key, key)) {
                 return entry.value;
             }
@@ -85,11 +94,17 @@ public class HashMap implements Map {
     }
 
     @Override
-    public Object remove(Object key) {
-        List<Entry> bucket = buckets[calculateIndex(key)];
-        for (Entry entry : bucket) {
+    public V remove(K key) {
+        if (isEmpty()) {
+            return null;
+        }
+        List<Entry<K, V>> bucket = buckets[calculateIndex(key)];
+        if (bucket == null) {
+            return null;
+        }
+        for (Entry<K, V> entry : bucket) {
             if (Objects.equals(entry.key, key)) {
-                Object result = entry.value;
+                V result = entry.value;
                 bucket.remove(entry);
                 size--;
                 return result;
@@ -109,13 +124,19 @@ public class HashMap implements Map {
     }
 
     @Override
-    public boolean containsKey(Object key) {
+    public boolean containsKey(K key) {
+        if (isEmpty()) {
+            return false;
+        }
         return keys().contains(key);
     }
 
     @Override
-    public Object putIfAbsent(Object key, Object value) {
-        Object result = get(key);
+    public V putIfAbsent(K key, V value) {
+        if (isEmpty()) {
+            return null;
+        }
+        V result = get(key);
         if (result == null) {
             put(key, value);
         }
@@ -123,19 +144,28 @@ public class HashMap implements Map {
     }
 
     @Override
-    public void putAll(HashMap addedMap) {
-        for (ArrayList<Entry> bucket : addedMap.buckets) {
-            for (Entry entry : bucket) {
+    public void putAll(HashMap<K, V> addedMap) {
+        for (ArrayList<Entry<K, V>> bucket : addedMap.buckets) {
+            if (bucket == null) {
+                continue;
+            }
+            for (Entry<K, V> entry : bucket) {
                 put(entry.key, entry.value);
             }
         }
     }
 
     @Override
-    public List<Object> keys() {
-        List<Object> keys = new ArrayList<>(size);
-        for (ArrayList<Entry> bucket : buckets) {
-            for (Entry entry : bucket) {
+    public List<K> keys() {
+        if (isEmpty()) {
+            return null;
+        }
+        List<K> keys = new ArrayList<>(size);
+        for (ArrayList<Entry<K, V>> bucket : buckets) {
+            if (bucket == null) {
+                continue;
+            }
+            for (Entry<K, V> entry : bucket) {
                 keys.add(entry.key);
             }
         }
@@ -143,22 +173,97 @@ public class HashMap implements Map {
     }
 
     @Override
-    public List<Object> values() {
-        List<Object> values = new ArrayList<>(size);
-        for (ArrayList<Entry> bucket : buckets) {
-            for (Entry entry : bucket) {
+    public List<V> values() {
+        if (isEmpty()) {
+            return null;
+        }
+        List<V> values = new ArrayList<>(size);
+        for (ArrayList<Entry<K, V>> bucket : buckets) {
+            if (bucket == null) {
+                continue;
+            }
+            for (Entry<K, V> entry : bucket) {
                 values.add(entry.value);
             }
         }
         return values;
     }
 
-    private static class Entry {
-        private Object key;
-        private Object value;
+    @Override
+    public Iterator<Map.Entry<K, V>> iterator() {
+        return new HashMapIterator();
+    }
 
-        public Entry(Object key, Object value) {
+    private class HashMapIterator implements Iterator<Map.Entry<K, V>> {
+
+        private int currentEntryCount;
+        private int currentBucketIndex;
+        private int currentEntryIndexInBucket;
+        private boolean canRemove;
+
+        @Override
+        public boolean hasNext() {
+            return currentEntryCount < size;
+        }
+
+        @Override
+        public Entry<K, V> next() {
+            if (!hasNext()) {
+                throw new NoSuchElementException("There is no next element");
+            }
+            Entry<K, V> currentEntry;
+            for (int i = currentBucketIndex; i < buckets.length; i++) {
+                if (buckets[i] != null) {
+                    currentBucketIndex = i;
+                    if (currentEntryIndexInBucket < buckets[i].size()) {
+                        currentEntry = buckets[i].get(currentEntryIndexInBucket);
+                        currentEntryIndexInBucket++;
+                        currentEntryCount++;
+                        canRemove = true;
+                        return currentEntry;
+                    } else {
+                        currentBucketIndex++;
+                        currentEntryIndexInBucket = 0;
+                    }
+                }
+            }
+            return null;
+        }
+
+        @Override
+        public void remove() {
+            if (!canRemove) {
+                throw new IllegalStateException("Method next() should be called before remove");
+            }
+            Entry<K, V> entryToBeDeleted = buckets[currentBucketIndex].get(currentEntryIndexInBucket - 1);
+            HashMap.this.remove(entryToBeDeleted.key);
+            canRemove = false;
+            currentEntryCount--;
+            currentEntryIndexInBucket--;
+        }
+    }
+
+    private static class Entry<K, V> implements Map.Entry<K, V> {
+        private final K key;
+        private V value;
+
+        public Entry(K key, V value) {
             this.key = key;
+            this.value = value;
+        }
+
+        @Override
+        public K getKey() {
+            return key;
+        }
+
+        @Override
+        public V getValue() {
+            return value;
+        }
+
+        @Override
+        public void setValue(V value) {
             this.value = value;
         }
     }

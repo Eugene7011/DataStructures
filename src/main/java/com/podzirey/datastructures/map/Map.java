@@ -1,25 +1,40 @@
 package com.podzirey.datastructures.map;
 
 import java.util.List;
+import java.util.Iterator;
 
-public interface Map {
-    Object put(Object key, Object value);
+public interface Map<K, V> extends Iterable<Map.Entry<K,V>> {
+    V put(K key, V value);
 
-    Object get(Object key);
+    V get(K key);
 
-    Object remove(Object key);
+    V remove(K key);
 
     int size();
 
     boolean isEmpty();
 
-    boolean containsKey(Object key);
+    boolean containsKey(K key);
 
-    Object putIfAbsent(Object key, Object value);
+    V putIfAbsent(K key, V value);
 
-    void putAll(HashMap map);
+    void putAll(HashMap<K, V> map);
 
-    List keys();
+    List<K> keys();
 
-    List values();
+    List<V> values();
+
+        @Override
+    default Iterator<Map.Entry<K, V>>iterator(){
+        throw new UnsupportedOperationException();
+    }
+
+    interface Entry<K, V>  {
+        K getKey();
+
+        V getValue();
+
+        void setValue(V value);
+
+    }
 }

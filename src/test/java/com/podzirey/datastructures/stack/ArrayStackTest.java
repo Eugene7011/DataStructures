@@ -1,71 +1,64 @@
 package com.podzirey.datastructures.stack;
 
 import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+
+import java.util.EmptyStackException;
 
 import static org.junit.jupiter.api.Assertions.*;
 
 public class ArrayStackTest {
+    private final ArrayStack<String> arrayStack = new ArrayStack<>();
 
+    @DisplayName("Test Push And Pop Work Correct")
     @Test
-    public void testPushAndPopWorkCorrectlyAndChangeSize() {
-        ArrayStack arrayStack = new ArrayStack();
+    public void testPushAndPopWorkCorrect() {
         arrayStack.push("A");
         arrayStack.push("B");
 
-        assertEquals(2, arrayStack.size());
         assertEquals("B", arrayStack.pop());
         assertEquals("A", arrayStack.pop());
-        assertEquals(0, arrayStack.size());
-        assertTrue(arrayStack.isEmpty());
     }
 
+    @DisplayName("Test Size")
     @Test
-    public void testPushOverInitialCapacityAndPopWorkCorrectlyAndChangeSize() {
-        ArrayStack arrayStack = new ArrayStack(2);
-        arrayStack.push("A");
-        arrayStack.push("B");
-        arrayStack.push("C");
-
-        assertEquals(3, arrayStack.size());
-
-        assertEquals("C", arrayStack.pop());
-        assertEquals("B", arrayStack.pop());
-        assertEquals("A", arrayStack.pop());
-
+    public void testSize() {
         assertEquals(0, arrayStack.size());
-        assertTrue(arrayStack.isEmpty());
+
+        arrayStack.push("A");
+        assertEquals(1, arrayStack.size());
+
+        assertEquals("A", arrayStack.pop());
+        assertEquals(0, arrayStack.size());
     }
 
+    @DisplayName("Test Push And Peek")
     @Test
     public void testPushAndPeek() {
-        ArrayStack arrayStack = new ArrayStack();
         arrayStack.push("A");
-        arrayStack.push("B");
+        assertEquals("A", arrayStack.peek());
 
-        assertEquals(2, arrayStack.size());
+        arrayStack.push("B");
         assertEquals("B", arrayStack.peek());
-        assertEquals("B", arrayStack.peek());
-        assertEquals(2, arrayStack.size());
     }
 
+    @DisplayName("Test IsEmpty Return True On New Stack")
     @Test
     public void testIsEmptyReturnTrueOnNewStack() {
-        ArrayStack arrayStack = new ArrayStack();
         assertTrue(arrayStack.isEmpty());
     }
 
+    @DisplayName("Test IsEmpty Return False On Stack With Data")
     @Test
     public void testIsEmptyReturnFalseOnStackWithData() {
-        ArrayStack arrayStack = new ArrayStack();
         arrayStack.push("A");
-
         assertFalse(arrayStack.isEmpty());
     }
 
+    @DisplayName("Test IsEmpty Return True On Stack After Clear")
     @Test
     public void testIsEmptyReturnTrueOnStackAfterClear() {
-        ArrayStack arrayStack = new ArrayStack();
         arrayStack.push("A");
         arrayStack.push("B");
 
@@ -73,34 +66,49 @@ public class ArrayStackTest {
         assertTrue(arrayStack.isEmpty());
     }
 
+    @DisplayName("Test Contains Return True")
     @Test
     public void testContainsReturnTrue() {
-        ArrayStack arrayStack = new ArrayStack();
         arrayStack.push("A");
         arrayStack.push("B");
 
         assertTrue(arrayStack.contains("A"));
     }
 
+    @DisplayName("Test Contains Return False")
     @Test
     public void testContainsReturnFalse() {
-        ArrayStack arrayStack = new ArrayStack();
         arrayStack.push("A");
         arrayStack.push("B");
         assertFalse(arrayStack.contains("C"));
     }
 
+    @DisplayName("Test Contains False On Empty Stack")
     @Test
     public void testContainsReturnFalseOnEmptyStack() {
-        ArrayStack arrayStack = new ArrayStack();
         assertFalse(arrayStack.contains("C"));
     }
 
+    @DisplayName("Test Pop Returns Null After Push Null")
     @Test
-    public void testThrowIllegalStateExceptionWhenPopOnEmptyStack() {
-        ArrayStack arrayStack = new ArrayStack();
-        Assertions.assertThrows(IllegalStateException.class, () -> {
+    public void testPopReturnsNullAfterPushNull() {
+        arrayStack.push(null);
+        assertNull(arrayStack.pop());
+    }
+
+    @DisplayName("Test Pop Throw EmptyStackException When Pop On Empty Stack")
+    @Test
+    public void testPopThrowIllegalStateExceptionWhenPopOnEmptyStack() {
+        Assertions.assertThrows(EmptyStackException.class, () -> {
             arrayStack.pop();
+        });
+    }
+
+    @DisplayName("Test Peek Throw EmptyStackException When Pop On Empty Stack")
+    @Test
+    public void testPeekThrowIllegalStateExceptionWhenPopOnEmptyStack() {
+        Assertions.assertThrows(EmptyStackException.class, () -> {
+            arrayStack.peek();
         });
     }
 }

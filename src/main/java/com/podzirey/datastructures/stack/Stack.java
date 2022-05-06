@@ -1,13 +1,13 @@
 package com.podzirey.datastructures.stack;
 
-public interface Stack {
-    void push(Object value);
+public interface Stack<T> {
+    void push(T value);
 
-    Object pop();
+    T pop();
 
-    Object peek();
+    T peek();
 
-    boolean contains(Object value);
+    boolean contains(T value);
 
     int size();
 
