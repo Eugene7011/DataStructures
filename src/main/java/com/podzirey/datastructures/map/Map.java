@@ -24,17 +24,11 @@ public interface Map<K, V> extends Iterable<Map.Entry<K,V>> {
 
     List<V> values();
 
-        @Override
-    default Iterator<Map.Entry<K, V>>iterator(){
-        throw new UnsupportedOperationException();
-    }
-
     interface Entry<K, V>  {
         K getKey();
 
         V getValue();
 
         void setValue(V value);
-
     }
 }

@@ -40,42 +40,6 @@ public class HashMap<K, V> implements Map<K, V> {
         return null;
     }
 
-    private Entry<K, V> getEntry(K key) {
-        List<Entry<K, V>> bucket = buckets[calculateIndex(key)];
-        if (bucket == null) {
-            return null;
-        }
-        for (Entry<K, V> entry : bucket) {
-            if (Objects.equals(entry.key, key)) {
-                return entry;
-            }
-        }
-        return null;
-    }
-
-    private void increaseHashMapCapacityIfNeeded() {
-        if (buckets.length * LOAD_LEVEL < size) {
-            int capacity = (int) (buckets.length * INCREASE_STEP);
-            HashMap<K, V> resizedHashMap = new HashMap<>(capacity);
-            HashMap<K, V> oldHashMap = this;
-            for (Map.Entry<K, V> currentEntry : oldHashMap) {
-                resizedHashMap.put(currentEntry.getKey(), currentEntry.getValue());
-            }
-            buckets = resizedHashMap.buckets;
-        }
-    }
-
-    int calculateIndex(K key) {
-        if (key == null) {
-            return 0;
-        }
-        int hashCode = key.hashCode();
-        if (hashCode == Integer.MIN_VALUE) {
-            return 0;
-        }
-        return Math.abs(hashCode) % buckets.length;
-    }
-
     @Override
     public V get(K key) {
         if (isEmpty()) {
@@ -128,7 +92,16 @@ public class HashMap<K, V> implements Map<K, V> {
         if (isEmpty()) {
             return false;
         }
-        return keys().contains(key);
+        List<Entry<K, V>> bucket = buckets[calculateIndex(key)];
+        if (bucket == null) {
+            return false;
+        }
+        for (Entry<K, V> entry : bucket) {
+            if (Objects.equals(entry.key, key)) {
+                return true;
+            }
+        }
+        return false;
     }
 
     @Override
@@ -241,6 +214,64 @@ public class HashMap<K, V> implements Map<K, V> {
             currentEntryCount--;
             currentEntryIndexInBucket--;
         }
+    }
+
+    private Entry<K, V> getEntry(K key) {
+        List<Entry<K, V>> bucket = buckets[calculateIndex(key)];
+        if (bucket == null) {
+            return null;
+        }
+        for (Entry<K, V> entry : bucket) {
+            if (Objects.equals(entry.key, key)) {
+                return entry;
+            }
+        }
+        return null;
+    }
+
+    @SuppressWarnings("unchecked")
+    private void increaseHashMapCapacityIfNeeded() {
+        if (buckets.length * LOAD_LEVEL < size) {
+            int capacity = (int) (buckets.length * INCREASE_STEP);
+            ArrayList<Entry<K, V>>[] newBuckets = new ArrayList[capacity];
+
+            for (Map.Entry<K, V> currentEntry : this) {
+                innerPut(newBuckets, currentEntry);
+            }
+            buckets = newBuckets;
+        }
+    }
+
+    private void innerPut(ArrayList<Entry<K, V>>[] newBuckets, Map.Entry<K, V> currentEntry) {
+        int bucketIndex = calculateIndex(currentEntry.getKey(), newBuckets.length);
+        if (newBuckets[bucketIndex] == null) {
+            newBuckets[bucketIndex] = new ArrayList<>(1);
+            newBuckets[bucketIndex].add(new Entry<>(currentEntry.getKey(), currentEntry.getValue()));
+        }
+
+        newBuckets[bucketIndex].add(new Entry<>(currentEntry.getKey(), currentEntry.getValue()));
+    }
+
+    int calculateIndex(K key) {
+        if (key == null) {
+            return 0;
+        }
+        int hashCode = key.hashCode();
+        if (hashCode == Integer.MIN_VALUE) {
+            return 0;
+        }
+        return Math.abs(hashCode) % buckets.length;
+    }
+
+    private int calculateIndex(K key, int length) {
+        if (key == null) {
+            return 0;
+        }
+        int hashCode = key.hashCode();
+        if (hashCode == Integer.MIN_VALUE) {
+            return 0;
+        }
+        return Math.abs(hashCode) % length;
     }
 
     private static class Entry<K, V> implements Map.Entry<K, V> {

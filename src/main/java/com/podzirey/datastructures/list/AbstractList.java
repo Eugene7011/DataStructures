@@ -2,12 +2,12 @@ package com.podzirey.datastructures.list;
 
 import java.util.StringJoiner;
 
-public abstract class AbstractList<T> implements List<T>{
+public abstract class AbstractList<T> implements List<T> {
     protected int size;
 
     @Override
     public void add(T value) {
-        add(value, this.size);
+        add(value, size);
     }
 
     @Override

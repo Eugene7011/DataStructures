@@ -36,47 +36,12 @@ public class LinkedList<T> extends AbstractList<T> {
         size++;
     }
 
-    private Node<T> getNode(int index) {
-        Node<T> nodeByIndex;
-
-        if (index < size / 2) {
-            nodeByIndex = head;
-            for (int i = 0; i < index; i++) {
-                nodeByIndex = nodeByIndex.next;
-            }
-        } else {
-            nodeByIndex = tail;
-            for (int i = size - 1; i > index; i--) {
-                nodeByIndex = nodeByIndex.prev;
-            }
-        }
-        return nodeByIndex;
-    }
-
     @Override
     public T remove(int index) {
         validateExistingIndex(index);
         Node<T> removedNode = getNode(index);
         removeNode(removedNode);
         return removedNode.value;
-    }
-
-    private void removeNode(Node<T> node) {
-        if (size == 1) {
-            head = tail = null;
-        } else if (node == head) {
-            head = node.next;
-            head.prev = null;
-        } else if (node == tail) {
-            tail = node.prev;
-            tail.next = null;
-        } else {
-            Node<T> prevNode = node.prev;
-            Node<T> nextNode = node.next;
-            prevNode.next = nextNode;
-            nextNode.prev = prevNode;
-        }
-        size--;
     }
 
     @Override
@@ -172,6 +137,41 @@ public class LinkedList<T> extends AbstractList<T> {
             removeNode(current);
             canRemove = false;
         }
+    }
+
+    private Node<T> getNode(int index) {
+        Node<T> nodeByIndex;
+
+        if (index < size / 2) {
+            nodeByIndex = head;
+            for (int i = 0; i < index; i++) {
+                nodeByIndex = nodeByIndex.next;
+            }
+        } else {
+            nodeByIndex = tail;
+            for (int i = size - 1; i > index; i--) {
+                nodeByIndex = nodeByIndex.prev;
+            }
+        }
+        return nodeByIndex;
+    }
+
+    private void removeNode(Node<T> node) {
+        if (size == 1) {
+            head = tail = null;
+        } else if (node == head) {
+            head = node.next;
+            head.prev = null;
+        } else if (node == tail) {
+            tail = node.prev;
+            tail.next = null;
+        } else {
+            Node<T> prevNode = node.prev;
+            Node<T> nextNode = node.next;
+            prevNode.next = nextNode;
+            nextNode.prev = prevNode;
+        }
+        size--;
     }
 
     private static class Node<T> {

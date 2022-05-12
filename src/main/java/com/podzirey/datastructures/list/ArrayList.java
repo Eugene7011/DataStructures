@@ -26,16 +26,6 @@ public class ArrayList<T> extends AbstractList<T> {
         size++;
     }
 
-    private void growIfNoCapacity() {
-        if (size == array.length) {
-            double newCapacity = array.length * 1.5 + 1;
-            @SuppressWarnings("unchecked")
-            T[] newArray = (T[]) new Object[(int) newCapacity];
-            System.arraycopy(array, 0, newArray, 0, array.length);
-            array = newArray;
-        }
-    }
-
     @Override
     public T remove(int index) {
         validateExistingIndex(index);
@@ -80,10 +70,7 @@ public class ArrayList<T> extends AbstractList<T> {
             }
         } else {
             for (int i = 0; i < size; i++) {
-                if (array[i] == null) {
-                    continue;
-                }
-                if (array[i].equals(value)) {
+                if (value.equals(array[i])) {
                     return i;
                 }
             }
@@ -94,15 +81,8 @@ public class ArrayList<T> extends AbstractList<T> {
     @Override
     public int lastIndexOf(T value) {
         int result = -1;
-        if (Objects.isNull(value)) {
-            for (int i = size - 1; i >= 0; i--) {
-                if (array[i] == null) {
-                    return i;
-                }
-            }
-        }
         for (int i = size - 1; i >= 0; i--) {
-            if (array[i].equals(value)) {
+            if (Objects.equals(array[i], value)) {
                 return i;
             }
         }
@@ -142,6 +122,16 @@ public class ArrayList<T> extends AbstractList<T> {
             ArrayList.this.remove(index - 1);
             canRemove = false;
             index--;
+        }
+    }
+
+    private void growIfNoCapacity() {
+        if (size == array.length) {
+            double newCapacity = array.length * 1.5 + 1;
+            @SuppressWarnings("unchecked")
+            T[] newArray = (T[]) new Object[(int) newCapacity];
+            System.arraycopy(array, 0, newArray, 0, array.length);
+            array = newArray;
         }
     }
 }
