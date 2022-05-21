@@ -20,10 +20,6 @@ public interface Map<K, V> extends Iterable<Map.Entry<K,V>> {
 
     void putAll(HashMap<K, V> map);
 
-    List<K> keys();
-
-    List<V> values();
-
     interface Entry<K, V>  {
         K getKey();
 

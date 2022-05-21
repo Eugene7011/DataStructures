@@ -3,6 +3,8 @@ package com.podzirey.datastructures.map;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
+import java.util.Iterator;
+
 import static org.junit.jupiter.api.Assertions.*;
 
 public class HashMapTest {
@@ -74,16 +76,19 @@ public class HashMapTest {
         assertTrue(hashMap.containsKey(null));
     }
 
+    @DisplayName("Test given Empty HashMap When Get By Null Key Then Null Should Be Returned")
     @Test
     public void givenEmptyHashMapWhenGetByNullKeyThenNullShouldBeReturned() {
         assertNull(hashMap.get(null));
     }
 
+    @DisplayName("Test given Empty HashMap When Get By Not Null Key Then Null Should Be Returned")
     @Test
     public void givenEmptyHashMapWhenGetByNotNullKeyThenNullShouldBeReturned() {
         assertNull(hashMap.get("key"));
     }
 
+    @DisplayName("Test given Not Empty HashMap When Get By Null Key Then Null Should Be Returned")
     @Test
     public void givenNotEmptyHashMapWhenGetByNullKeyThenNullShouldBeReturned() {
         assertNull(hashMap.put("key1", "value1"));
@@ -103,12 +108,14 @@ public class HashMapTest {
         assertEquals("value1", hashMap.get("key1"));
     }
 
+    @DisplayName("Test given Not Empty HashMap When Get By Existing  Null Key Then Value Should Be Returned")
     @Test
     public void givenNotEmptyHashMapWhenGetByExistingNullKeyThenValueShouldBeReturned() {
         assertNull(hashMap.put(null, "value1"));
         assertEquals("value1", hashMap.get(null));
     }
 
+    @DisplayName("Test given Empty HashMap When Contains By Null Key Then False Should Be Returned")
     @Test
     public void givenEmptyHashMapWhenContainsByNullThenFalseShouldBeReturned() {
         assertFalse(hashMap.containsKey(null));
@@ -153,46 +160,8 @@ public class HashMapTest {
     public void givenEmptyHashMapWhenPutNullKeyAndValueAndRemoveByNullThenValueShouldBeReturnedAndIsEmptyTrue() {
         assertNull(hashMap.put(null, "value"));
         assertEquals("value", hashMap.remove(null));
+        assertFalse(hashMap.containsKey(null));
         assertTrue(hashMap.isEmpty());
-    }
-
-    @Test
-    public void testKeyGeneralCase() {
-        hashMap.put("key1", "value1");
-        hashMap.put("key2", "value2");
-        hashMap.put("key3", "value3");
-
-        assertEquals(3, hashMap.keys().size());
-        assertTrue(hashMap.keys().contains("key1"));
-        assertTrue(hashMap.keys().contains("key2"));
-        assertTrue(hashMap.keys().contains("key3"));
-    }
-
-    @Test
-    public void givenEmptyHashMapWhenPutNullKeyThenKeyListShouldContainNull() {
-        hashMap.put(null, null);
-
-        assertTrue(hashMap.keys().contains(null));
-    }
-
-    @Test
-    public void testValuesGeneralCase() {
-        hashMap.put("key1", "value1");
-        assertEquals("[key1]", hashMap.keys().toString());
-        hashMap.put("key2", "value2");
-        hashMap.put("key3", "value3");
-
-        assertEquals(3, hashMap.keys().size());
-        assertTrue(hashMap.values().contains("value1"));
-        assertTrue(hashMap.values().contains("value2"));
-        assertTrue(hashMap.values().contains("value3"));
-    }
-
-    @Test
-    public void givenEmptyHashMapWhenPutNullKeyThenValuesListShouldContainNull() {
-        hashMap.put(null, null);
-
-        assertTrue(hashMap.values().contains(null));
     }
 
     @Test
@@ -223,5 +192,66 @@ public class HashMapTest {
         assertEquals("VALUE1", hashMap.get("KEY1"));
         assertTrue(hashMap.containsKey("KEY2"));
         assertEquals("VALUE3", hashMap.remove("KEY3"));
+    }
+
+    @Test
+    public void testIteratorHasNext() {
+        Iterator<Map.Entry<String, String>> iterator = hashMap.iterator();
+        hashMap.put("key1", "value1");
+
+        assertTrue(iterator.hasNext());
+    }
+
+    @Test
+    public void testIteratorHasNoNext() {
+        Iterator<Map.Entry<String, String>> iterator = hashMap.iterator();
+        hashMap.put("key1", "value1");
+        iterator.next();
+
+        assertFalse(iterator.hasNext());
+    }
+
+    @Test
+    public void testIteratorHasNoNextAfterSeveralPut() {
+        Iterator<Map.Entry<String, String>> iterator = hashMap.iterator();
+        hashMap.put("key1", "value1");
+        hashMap.put("key2", "value2");
+        hashMap.put("key3", "value3");
+        iterator.next();
+        iterator.next();
+        iterator.next();
+
+        assertFalse(iterator.hasNext());
+    }
+
+    @Test
+    public void testIteratorHasNoNextOnEmptyMap() {
+        Iterator<Map.Entry<String, String>> iterator = hashMap.iterator();
+
+        assertFalse(iterator.hasNext());
+    }
+
+    @Test
+    public void testIteratorRemove() {
+        Iterator<Map.Entry<String, String>> iterator = hashMap.iterator();
+        hashMap.put("key1", "value1");
+        hashMap.put("key2", "value2");
+        hashMap.put("key3", "value3");
+
+        iterator.next();
+        iterator.remove();
+
+        assertFalse(hashMap.containsKey("key1"));
+    }
+
+    @Test
+    public void testSizeAfterIteratorRemove() {
+        Iterator<Map.Entry<String, String>> iterator = hashMap.iterator();
+        hashMap.put("key1", "value1");
+
+        iterator.next();
+        iterator.remove();
+
+        assertEquals(0, hashMap.size());
     }
 }
