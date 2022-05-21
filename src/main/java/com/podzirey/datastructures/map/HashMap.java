@@ -42,7 +42,6 @@ public class HashMap<K, V> implements Map<K, V> {
                 currentEntry.value = value;
                 updated = true;
             }
-
             currentEntry = currentEntry.next;
         }
 
@@ -88,9 +87,7 @@ public class HashMap<K, V> implements Map<K, V> {
 
         while (entryToBeDeleted != null) {
             if (entryToBeDeleted.hash == hash && Objects.equals(entryToBeDeleted.key, key)) {
-
                 contains = true;
-                //return result;
                 break;
             }
             entryToBeDeleted = entryToBeDeleted.next;
